@@ -258,8 +258,10 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
 
         if baixar == 'sim':
             for c in range(1, 200):
-                if not os.path.isfile('scraps/scrap'+str(c)+'.json'):
-                    with open('scraps/scrap'+str(c)+'.json', 'w') as outfile:
+                if not os.path.isfile('scraps/scrap'+str(c)+'_result.json'):
+                    with open('scraps/scrap'+str(c)+'_config.json', 'w') as outfile:
+                        json.dump(ultimo_scrap, outfile)
+                    with open('scraps/scrap'+str(c)+'_result.json', 'w') as outfile:
                         json.dump(x, outfile)
                     break
 
