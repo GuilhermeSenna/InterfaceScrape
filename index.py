@@ -3,10 +3,20 @@ import datetime
 from time import sleep
 import requests
 from bs4 import BeautifulSoup
+import SessionState
 from autoscraper import AutoScraper
 import json
 
+ultimo_scrap = {}
 cont = 0
+session_state = SessionState.get(texto='')
+
+PRE_URL = ''
+PRE_QNTD = 1
+PRE_NOME = ['', '', '', '', '', '', '', '', '', '']
+PRE_TAG = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+PRE_IDEEL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+PRE_NOIDE = ['', '', '', '', '', '', '', '', '', '']
 
 
 def espaco():
@@ -21,15 +31,54 @@ def exemplo():
     st.text('Nome do identificador: paragraph')
 
 
+def recarregar(data):
+    global PRE_URL, PRE_QNTD, PRE_NOME, PRE_TAG, PRE_IDEEL, PRE_NOIDE
+
+    PRE_URL = data['URL']
+    PRE_QNTD = data['qntd_inputs']
+
+    for k, v in enumerate(data['nome']):
+        PRE_NOME[k] = v
+
+    for k, v in enumerate(data['TAG']):
+        PRE_TAG[k] = v
+        PRE_TAG[k] = ['div', 'span', 'a', 'img', 'input', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+         'outro'].index(PRE_TAG[k])
+
+    for k, v in enumerate(data['ident_elemento']):
+        PRE_IDEEL[k] = v
+        PRE_IDEEL[k] = ['class', 'id', 'outro'].index(PRE_IDEEL[k])
+
+    for k, v in enumerate(data['nome_ident']):
+        PRE_NOIDE[k] = v
+
+
 def metodoManual(headers):
     st.title('Webscraping Manual')
 
-    URL = st.text_input('URL do site')
+    data = ''
 
-    qntd_inputs = st.text_input('Digite a quantidade de inputs (Por padrão é deixado 1)')
+    try:
+        with open('ult_scrap.txt') as json_file:
+            data = json.load(json_file)
 
-    if qntd_inputs == '':
-        qntd_inputs = 1
+        st.subheader("Último Scrap usado:")
+
+        st.text(json.dumps(data, indent=4))
+    except:
+        pass
+
+    ult = st.radio('Usar último scrape?', ('nao', 'sim'))
+
+    if ult == 'sim':
+        recarregar(data)
+
+    URL = st.text_input('URL do site', PRE_URL)
+
+    qntd_inputs = st.text_input('Digite a quantidade de inputs (Por padrão é deixado 1)', PRE_QNTD)
+    #
+    # if qntd_inputs == '':
+    #     qntd_inputs = 1
 
     agrupamento = st.radio(' Qual a forma de agrupamento a ser usada?', ('Linear', 'Conjuntos', 'Mista'))
 
@@ -72,7 +121,7 @@ def metodoManual(headers):
     for c in range(0, int(qntd_inputs)):
         st.subheader('input ' + str(c + 1))
 
-        nome[c] = st.text_input('Nome associado ao input (ex: Título, preço, Descrição, etc...) ', key=c)
+        nome[c] = st.text_input('Nome associado ao input (ex: Título, preço, Descrição, etc...) ', PRE_NOME[c], key=c)
 
         unica[c] = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'),
                                 key=c)
@@ -80,28 +129,41 @@ def metodoManual(headers):
         tipo_global[c] = st.selectbox('Selecione a tag',
                                       ['div', 'span', 'a', 'img', 'input', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                                        'outro'],
-                                      key=c)
+                                      PRE_TAG[c], key = c)
         # nome_global = st.text_input("nome")
 
         # if tipo_global == 'outro:
 
         tipo_especifico[c] = st.selectbox('Selecione o identificador do elemento', ['class', 'id', 'outro'], key=c)
 
-        nome_especifico[c] = st.text_input(" Nome do identificador usado", key=c)
+        nome_especifico[c] = st.text_input(" Nome do identificador usado", PRE_NOIDE[c])
 
         if unica[c] == 'nao':
             tagsMultiplas(URL, headers, tipo_global, tipo_especifico, nome_especifico, c)
 
         espaco()
 
-    minerar(URL, headers, unica, qntd_inputs, tipo_global, tipo_especifico, nome, nome_especifico)
+    baixar = st.radio('Deseja baixar o arquivo .JSON?', ('nao', 'sim'))
+
+    limpar = st.radio('Deseja forçar a deleção de "\ n" e "\ t"? ',  ('nao', 'sim'))
+
+    minerar(URL, headers, unica, qntd_inputs, tipo_global, tipo_especifico, nome, nome_especifico, baixar, limpar)
+
+    # y = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'))
+    # if y == 'sim':
+    #     print(session_state)
+        # with open('data.txt', 'w') as outfile:
+        #     json.dump(texto_formatado, outfile)
 
 
 def tagsMultiplas(URL, headers, tGlobal, tEspecifico, nEspecifico, c):
     global cont
     cont += 1
     if st.button('Buscar tags', key=cont):
-        page = requests.get(URL, headers=headers)
+        try:
+            page = requests.get(URL, headers=headers)
+        except:
+            print('Deu problema')
 
         soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -111,11 +173,14 @@ def tagsMultiplas(URL, headers, tGlobal, tEspecifico, nEspecifico, c):
             st.text(item.text)
 
 
-def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico):
+def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar):
     global x
     if st.button('Minerar'):
         page = requests.get(URL, headers=headers)
         # page.raise_for_status()
+
+        ultimo_scrap['URL'] = URL
+        ultimo_scrap['qntd_inputs'] = int(qntd)
 
         soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -123,19 +188,36 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico):
         text = []
         x = {}
 
+        # Salvar último scrap usado
+        tag = []
+        tEsp = []
+        nEsp = []
+        Nome = []
+
         for c in range(0, int(qntd)):
             # print(nEspecifico[c])
             text.clear()
             try:
+                tag.append(tGlobal[c])
+                tEsp.append(tEspecifico[c])
+                nEsp.append(nEspecifico[c])
+                Nome.append(nome[c])
+
                 if unc[c] == 'sim':
                     texto = soup.find(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]}).text
 
-                    x[nome[c]] = texto.strip()
+                    if limpar == 'sim':
+                        x[nome[c]] = texto.strip().replace('\n', '').replace('\t', '')
+                    else:
+                        x[nome[c]] = texto.strip()
                 else:
                     textos = soup.findAll(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]})
                     for txt in textos:
                         # print(txt)
-                        text.append(txt.text)
+                        if limpar == 'sim':
+                            text.append((txt.text).replace('\n', '').replace('\t', ''))
+                        else:
+                            text.append((txt.text))
 
                         print(text)
 
@@ -154,8 +236,28 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico):
 
         # for t in text:
             # st.text(t)
+
+        ultimo_scrap['nome'] = Nome
+        ultimo_scrap['TAG'] = tag
+        ultimo_scrap['ident_elemento'] = tEsp
+        ultimo_scrap['nome_ident'] = nEsp
+
+        with open('ult_scrap.txt', 'w') as outfile:
+            json.dump(ultimo_scrap, outfile)
+
+        st.header('Scrap utilizado:')
+        st.text(json.dumps(ultimo_scrap, indent=4))
+
+        st.header('Resultado do Scrape:')
         texto_formatado = json.dumps(x, ensure_ascii=False).encode('utf8')
-        st.text(texto_formatado.decode())
+        st.text(json.dumps(x, indent=4))
+
+
+        # session_state.texto = x
+
+        if baixar == 'sim':
+            with open('data.json', 'w') as outfile:
+                json.dump(x, outfile)
 
 def main():
     headers = {
@@ -170,10 +272,18 @@ def main():
     # soup = BeautifulSoup(page.text, 'html.parser')
 
     st.sidebar.title('Menu')
-    selected = st.sidebar.selectbox('Selecione a página', ['Manual', 'Automatico'])
+    selected = st.sidebar.selectbox('Selecione a página', ['Manual', 'Automatico', 'Carregar JSON'])
 
     if selected == 'Manual':
         metodoManual(headers)
+    elif 'Carregar JSON':
+        st.title('Carregamento de JSON')
+
+        if st.button('teste'):
+            with open('data.json') as json_file:
+                data = json.load(json_file)
+                print(data['Nome'])
+                # print(json.dumps(data, indent=4))
     else:
         st.title('Webscraping Automatico')
 

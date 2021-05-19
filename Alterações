@@ -1,0 +1,12 @@
+18/05/2021
+
+- Adição do SessionState.py usado para guardar o estado atual (variáveis globais)
+- Cria arquivo.JSON
+- Opcionalidade pro usuário baixar ou não JSON, remover forçado ou n os \n e \t
+- Nova janela para Carregamento do JSON
+
+
+
+- Possibilidade de salvar O último scrape para outro uso futuro
+-> Último scrape salvo em um txt (mas em formato JSON)
+=> Tentar Carregar na pág
