@@ -1,5 +1,32 @@
-18/05/2021
+Futuro:
 
+Criar um programa que reconheça diferenças entre as próximas páginas
+Pegar a página principal e 2 seguintes para saber
+
+Erros:
+
+-> Printando a quantidade de páginas extras informadas
+=> Escolhendo 2 páginas ele printa a index e mais 2 páginas
+
+
+Exemplos:
+
+Básico:
+
+    Principal: https://www.amazon.com.br/s?k=stephen+king
+
+    Proximas: https://www.amazon.com.br/s?k=stephen+king&page=2
+              https://www.amazon.com.br/s?k=stephen+king&page=3
+
+Intermediário:
+
+    Principal: https://www.americanas.com.br/busca/stephen-king
+
+    Proximas: https://www.americanas.com.br/busca/stephen-king?limit=24&offset=24
+              https://www.americanas.com.br/busca/stephen-king?limit=24&offset=48
+
+18/05/2021
+\
 - Adição do SessionState.py usado para guardar o estado atual (variáveis globais)
 - Cria arquivo.JSON
 - Opcionalidade pro usuário baixar ou não JSON, remover forçado ou n os \n e \t
@@ -10,3 +37,13 @@
 - Possibilidade de salvar O último scrape para outro uso futuro
 -> Último scrape salvo em um txt (mas em formato JSON)
 => Tentar Carregar na pág
+
+19/05/2021
+
+- Projeto Comentado
+- Corrigido erro de duplicação widget
+- Tag <i> adicionada
+- Correções no encode/decode UTF8
+- Config do IMDB e Amazon Salvas
+- Lógica de multipáginas iniciada (falta mais testes)
+- Lógica feita para manter os valores antigos ao passar de páginas
