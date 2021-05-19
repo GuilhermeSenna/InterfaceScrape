@@ -4,6 +4,7 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 import SessionState
+import os.path
 from autoscraper import AutoScraper
 import json
 
@@ -256,8 +257,11 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
         # session_state.texto = x
 
         if baixar == 'sim':
-            with open('data.json', 'w') as outfile:
-                json.dump(x, outfile)
+            for c in range(1, 200):
+                if not os.path.isfile('scraps/scrap'+str(c)+'.json'):
+                    with open('scraps/scrap'+str(c)+'.json', 'w') as outfile:
+                        json.dump(x, outfile)
+                    break
 
 def main():
     headers = {
