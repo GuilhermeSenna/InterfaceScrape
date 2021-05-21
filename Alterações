@@ -3,6 +3,23 @@ Futuro:
 Criar um programa que reconheça diferenças entre as próximas páginas
 Pegar a página principal e 2 seguintes para saber
 
+Input área para múltiplas páginas
+
+Puxar imagens, links
+
+Botão pra aparecer parte do código, ao clicar ativa True para aparecer e ao clicar novamente False desaparece. Usar Session
+
+Salvar também tag unica/conjunta
+
+Pagina para carregar o JSON e analisar os dados
+
+soup.find_all('img')
+
+print(soup.get_text())
+
+doc.find(text="INSERT FOOTER HERE") <- Posibilidade de buscar por algum texto
+
+
 Erros:
 
 -> Printando a quantidade de páginas extras informadas

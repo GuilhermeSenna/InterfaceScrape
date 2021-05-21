@@ -1,3 +1,5 @@
+import re
+
 import streamlit as st
 import datetime
 from time import sleep
@@ -119,13 +121,15 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
 
         if page.status_code == 200:
 
+            soup = BeautifulSoup(page.text, 'html.parser')
+
             # page.raise_for_status()
 
             ultimo_scrap['URL'] = URL
 
             ultimo_scrap['qntd_inputs'] = int(qntd)
 
-            soup = BeautifulSoup(page.text, 'html.parser')
+
 
             texto = ''
             text = []
@@ -352,11 +356,11 @@ def main():
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36', }
 
     st.sidebar.title('Menu')
-    selected = st.sidebar.selectbox('Selecione a página', ['Manual', 'Automatico', 'Carregar JSON'])
+    selected = st.sidebar.selectbox('Selecione a página', ['Manual', 'Automatico', 'Carregar JSON', 'Buscar exemplo'])
 
     if selected == 'Manual':
         metodoManual(headers)
-    elif 'Carregar JSON':
+    elif selected == 'Carregar JSON':
         st.title('Carregamento de JSON')
 
         if st.button('teste'):
@@ -364,8 +368,54 @@ def main():
                 data = json.load(json_file)
                 # print(data['Titulo'])
                 # print(json.dumps(data, indent=4))
-    else:
-        st.title('Webscraping Automatico')
+    elif selected == 'Buscar exemplo':
+        st.title('Buscando exempo')
+
+        link = st.text_input('URL')
+
+        teste = st.text_input('Texto a ser buscado')
+
+        if st.button('Buscar'):
+            page = requests.get(link, headers=headers)
+
+            if page.status_code == 200:
+                soup = BeautifulSoup(page.text, 'html.parser')
+
+                if len(soup.findAll(text=re.compile(teste, re.IGNORECASE))) != 0:
+                    for t in soup.findAll(text=re.compile(teste, re.IGNORECASE)):
+
+                        espaco()
+
+                        # st.text(t)
+
+                        st.text(t.parent)
+
+                        # st.text(t.parent.attrs)
+
+                        i = t.parent.attrs
+
+                        try:
+                            # st.text(i['class'])
+
+                            classe = ''
+
+                            for x in i['class']:
+                                classe += x
+                                classe += ' '
+                            classe.rstrip()
+
+                            st.text(f'class = {classe}')
+                        except:
+                            pass
+
+
+
+                    espaco()
+                else:
+                    st.text('Nada encontrado :(')
+        pass
+    # else:
+    #     st.title('Webscraping Automatico')
 
 
 # Início aqui
