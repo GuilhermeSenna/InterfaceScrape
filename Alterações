@@ -3,7 +3,7 @@ Futuro:
 Criar um programa que reconheça diferenças entre as próximas páginas
 Pegar a página principal e 2 seguintes para saber
 
-Input área para múltiplas páginas
+Input área para múltiplas páginas (mesmo site)
 
 Puxar imagens, links
 
@@ -13,11 +13,18 @@ Salvar também tag unica/conjunta
 
 Pagina para carregar o JSON e analisar os dados
 
-soup.find_all('img')
+soup.find_all('img') <- Pega todas as imagens da página
 
-print(soup.get_text())
+print(soup.get_text()) <- Pega todo o testo da página
 
-doc.find(text="INSERT FOOTER HERE") <- Posibilidade de buscar por algum texto
+Usar nova lógica de buscar elementos para:
+-> Buscar outros com a mesma tag (ou outro identificador)
+-> Usar lógica para buscar elementos próximos a ele
+
+Possibilidade de escolher tags/partes por botão
+
+Ex: Se tiver um texto interessante mas algum anúncio no meio que atrapalhe, usar radio ou outro
+para selecionar quais quer e quais não quer.
 
 
 Erros:
@@ -64,3 +71,10 @@ Intermediário:
 - Config do IMDB e Amazon Salvas
 - Lógica de multipáginas iniciada (falta mais testes)
 - Lógica feita para manter os valores antigos ao passar de páginas
+
+20/05/2021 - 21/05/2021
+
+Nova janela pra buscar elementos pelo conteúdo
+- Janela criada
+- Lógica para buscar elemento (burlando case sensitive)
+- Acha a tag pai e seus atributos
