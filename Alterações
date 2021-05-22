@@ -8,8 +8,7 @@ Input área para múltiplas páginas (mesmo site)
 Puxar imagens, links
 
 Botão pra aparecer parte do código, ao clicar ativa True para aparecer e ao clicar novamente False desaparece. Usar Session
-
-Salvar também tag unica/conjunta
+> Lógica similar usada para aparecer a tag pai
 
 Pagina para carregar o JSON e analisar os dados
 
@@ -18,13 +17,15 @@ soup.find_all('img') <- Pega todas as imagens da página
 print(soup.get_text()) <- Pega todo o testo da página
 
 Usar nova lógica de buscar elementos para:
--> Buscar outros com a mesma tag (ou outro identificador)
 -> Usar lógica para buscar elementos próximos a ele
 
 Possibilidade de escolher tags/partes por botão
 
 Ex: Se tiver um texto interessante mas algum anúncio no meio que atrapalhe, usar radio ou outro
 para selecionar quais quer e quais não quer.
+
+
+Organização para ao buscar tag e achar seu pai, aparecer de forma ordenada.
 
 ##
 
@@ -107,3 +108,6 @@ Evolução em buscar elementos pelo conteúdo
 - Coleta elementos de tag iguais dinamicamente (falta polir)
 - Busca tag mais exterior (falta procurar exemplos para tags ainda mais englobadas)
 - Buscar exemplo de função para package
+
+Minerar Manual
+- Tag de unicidade adicionada no JSON
