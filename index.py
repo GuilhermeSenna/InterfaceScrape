@@ -1,5 +1,3 @@
-import re
-
 import streamlit as st
 import datetime
 from time import sleep
@@ -9,13 +7,17 @@ import SessionState
 import os.path
 from autoscraper import AutoScraper
 import json
+from BuscarExemplo import buscar_exemplo
 
 # lyrics += str(lyric).lower().replace('<p>', '').replace('</p>', '').replace('<br/>', ' ').replace('(', '').replace(')', '').replace(',', '') + ' '
 
 # Variáveis auxiliares/globais
 ultimo_scrap = {}
 cont = 0
-session_state = SessionState.get(texto='')
+
+# req -> Armazenar a última requisição para não ser feita outra igual
+# last_URL -> Último link salvo
+session_state = SessionState.get(req='', last_URL=None)
 # URL_multiplas = []
 unicidade = ''
 QNTD = 0
@@ -27,7 +29,8 @@ text_save = []
 PRE_URL = ''
 PRE_QNTD = 1
 PRE_NOME = ['', '', '', '', '', '', '', '', '', '']
-PRE_TAG = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+PRE_UNICA = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+PRE_TAG = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 PRE_IDEEL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 PRE_NOIDE = ['', '', '', '', '', '', '', '', '', '']
 
@@ -71,7 +74,7 @@ def usar_ultimo(data):
 
 # Função utilizada para recarregar na página o último scrape utilizado
 def recarregar(data):
-    global PRE_URL, PRE_QNTD, PRE_NOME, PRE_TAG, PRE_IDEEL, PRE_NOIDE
+    global PRE_URL, PRE_QNTD, PRE_NOME, PRE_TAG, PRE_IDEEL, PRE_NOIDE, PRE_UNICA
 
     PRE_URL = data['URL']
     PRE_QNTD = data['qntd_inputs']
@@ -83,6 +86,10 @@ def recarregar(data):
         PRE_TAG[k] = v
         PRE_TAG[k] = ['div', 'span', 'a', 'img', 'input', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i',
                       'outro'].index(PRE_TAG[k])
+
+    for k, v in enumerate(data['unica']):
+        PRE_UNICA[k] = v
+        PRE_UNICA[k] = ['sim', 'nao'].index(PRE_UNICA[k])
 
     for k, v in enumerate(data['ident_elemento']):
         PRE_IDEEL[k] = v
@@ -138,6 +145,7 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
             tEsp = []
             nEsp = []
             Nome = []
+            unica = []
 
             for c in range(0, int(qntd)):
                 # print(nEspecifico[c])
@@ -147,6 +155,7 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
                     tEsp.append(tEspecifico[c])
                     nEsp.append(nEspecifico[c])
                     Nome.append(nome[c])
+                    unica.append(unc[c])
 
                     if unc[c] == 'sim':
                         texto = soup.find(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]}).text
@@ -203,6 +212,7 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
                 ultimo_scrap['TAG'] = tag
                 ultimo_scrap['ident_elemento'] = tEsp
                 ultimo_scrap['nome_ident'] = nEsp
+                ultimo_scrap['unica'] = unica
 
                 with open('ult_scrap.txt', 'w') as outfile:
                     json.dump(ultimo_scrap, outfile)
@@ -316,7 +326,7 @@ def metodoManual(headers):
         nome[c] = st.text_input('Nome associado ao input (ex: Título, preço, Descrição, etc...) ', PRE_NOME[c], key=c)
 
         # Tag única ou não
-        unica[c] = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'),
+        unica[c] = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'), PRE_UNICA[c],
                             key=c)
 
         # Tipo da tag usada
@@ -356,7 +366,8 @@ def main():
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36', }
 
     st.sidebar.title('Menu')
-    selected = st.sidebar.selectbox('Selecione a página', ['Manual', 'Automatico', 'Carregar JSON', 'Buscar exemplo'])
+
+    selected = st.sidebar.radio('Selecione a página', ['Manual', 'Automatico', 'Carregar JSON', 'Buscar exemplo'])
 
     if selected == 'Manual':
         metodoManual(headers)
@@ -369,53 +380,9 @@ def main():
                 # print(data['Titulo'])
                 # print(json.dumps(data, indent=4))
     elif selected == 'Buscar exemplo':
-        st.title('Buscando exempo')
-
-        link = st.text_input('URL')
-
-        teste = st.text_input('Texto a ser buscado')
-
-        if st.button('Buscar'):
-            page = requests.get(link, headers=headers)
-
-            if page.status_code == 200:
-                soup = BeautifulSoup(page.text, 'html.parser')
-
-                if len(soup.findAll(text=re.compile(teste, re.IGNORECASE))) != 0:
-                    for t in soup.findAll(text=re.compile(teste, re.IGNORECASE)):
-
-                        espaco()
-
-                        # st.text(t)
-
-                        st.text(t.parent)
-
-                        # st.text(t.parent.attrs)
-
-                        i = t.parent.attrs
-
-                        try:
-                            # st.text(i['class'])
-
-                            classe = ''
-
-                            for x in i['class']:
-                                classe += x
-                                classe += ' '
-                            classe.rstrip()
-
-                            st.text(f'class = {classe}')
-                        except:
-                            pass
-
-
-
-                    espaco()
-                else:
-                    st.text('Nada encontrado :(')
-        pass
-    # else:
-    #     st.title('Webscraping Automatico')
+        buscar_exemplo(headers, st, session_state)
+    else:
+        st.title('Webscraping Automatico')
 
 
 # Início aqui

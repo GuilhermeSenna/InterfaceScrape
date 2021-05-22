@@ -26,6 +26,25 @@ Possibilidade de escolher tags/partes por botão
 Ex: Se tiver um texto interessante mas algum anúncio no meio que atrapalhe, usar radio ou outro
 para selecionar quais quer e quais não quer.
 
+##
+
+Busca Externa para interna
+
+head_tag = soup.head
+head_tag
+# <head><title>The Dormouse's story</title></head>
+
+head_tag.contents
+# [<title>The Dormouse's story</title>]
+
+title_tag = head_tag.contents[0]
+title_tag
+# <title>The Dormouse's story</title>
+title_tag.contents
+# ['The Dormouse's story']
+
+##
+
 
 Erros:
 
@@ -78,3 +97,13 @@ Nova janela pra buscar elementos pelo conteúdo
 - Janela criada
 - Lógica para buscar elemento (burlando case sensitive)
 - Acha a tag pai e seus atributos
+
+21/05/2021 - 22/05/2021
+
+Evolução em buscar elementos pelo conteúdo
+- Lógica para guardar e checar se o último link buscado é o mesmo do último usado
+> Isso evita de fazer outra requisição, evitando de o IP ser banido e também busca mais rapidamente
+- Revisão na lib - Soup Beatiful
+- Coleta elementos de tag iguais dinamicamente (falta polir)
+- Busca tag mais exterior (falta procurar exemplos para tags ainda mais englobadas)
+- Buscar exemplo de função para package
