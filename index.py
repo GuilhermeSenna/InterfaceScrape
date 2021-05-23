@@ -8,6 +8,8 @@ import os.path
 from autoscraper import AutoScraper
 import json
 from BuscarExemplo import buscar_exemplo
+from Mineracao import minerar
+from Mineracao.auxiliares import exemplo, espaco
 
 # lyrics += str(lyric).lower().replace('<p>', '').replace('</p>', '').replace('<br/>', ' ').replace('(', '').replace(')', '').replace(',', '') + ' '
 
@@ -21,7 +23,6 @@ session_state = SessionState.get(req='', last_URL=None)
 # URL_multiplas = []
 unicidade = ''
 QNTD = 0
-LAST = 2
 x = {}
 text_save = []
 
@@ -35,29 +36,20 @@ PRE_IDEEL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 PRE_NOIDE = ['', '', '', '', '', '', '', '', '', '']
 
 
-# Função usada para simular o <br> do HTML, ou seja, uma separação horizontal
-def espaco():
-    st.text('-=' * 45)
-
-
-# Função utilizada para mostrar um exemplo de como preencher os inputs
-def exemplo():
-    st.subheader("Exemplo de preenchimento dos inputs")
-    st.text('<p class="paragraph"> Paragrafo qualquer </p> ')
-    st.text('tag: p')
-    st.text('identificador usado: class')
-    st.text('Nome do identificador: paragraph')
-
-
 # Função que mostra o último scrape utilizado no topo da página
 def ultimo_scrape():
     try:
         with open('ult_scrap.txt') as json_file:
             data = json.load(json_file)
 
-        st.subheader("Último Scrap usado:")
+        my_expander = st.beta_expander("Último Scrap usado:", expanded=True)
+        with my_expander:
+            # clicked = my_widget("second")
+            st.json(json.dumps(data, indent=4))
 
-        st.text(json.dumps(data, indent=4))
+        # st.subheader("Último Scrap usado:")
+
+
 
         return data
     except:
@@ -119,126 +111,6 @@ def tagsMultiplas(URL, headers, tGlobal, tEspecifico, nEspecifico, c):
             st.text(item.text)
 
 
-# Função principal de mineração
-def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar, URL_base, complemento, multiplas):
-    global x, QNTD, LAST, text_save
-    if st.button('Minerar', key=LAST) or multiplas:
-
-        page = requests.get(URL, headers=headers)
-
-        if page.status_code == 200:
-
-            soup = BeautifulSoup(page.text, 'html.parser')
-
-            # page.raise_for_status()
-
-            ultimo_scrap['URL'] = URL
-
-            ultimo_scrap['qntd_inputs'] = int(qntd)
-
-
-
-            texto = ''
-            text = []
-
-            tag = []
-            tEsp = []
-            nEsp = []
-            Nome = []
-            unica = []
-
-            for c in range(0, int(qntd)):
-                # print(nEspecifico[c])
-                text.clear()
-                try:
-                    tag.append(tGlobal[c])
-                    tEsp.append(tEspecifico[c])
-                    nEsp.append(nEspecifico[c])
-                    Nome.append(nome[c])
-                    unica.append(unc[c])
-
-                    if unc[c] == 'sim':
-                        texto = soup.find(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]}).text
-
-                        if limpar == 'sim':
-                            x[nome[c]] = texto.strip().replace('\n', '').replace('\t', '')
-                        else:
-                            x[nome[c]] = texto.strip()
-                    else:
-                        textos = soup.findAll(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]})
-                        for txt in textos:
-                            # print(txt)
-                            if limpar == 'sim':
-                                text.append(txt.text.replace('\n', '').replace('\t', ''))
-                            else:
-                                text.append(txt.text)
-
-                            # print(text)
-
-                        # textos.clear()
-                        if not multiplas:
-                            x[nome[c]] = text[:]
-                        else:
-                            x[nome[c]] += text[:]
-
-                    # print(text)
-
-                except:
-                    texto = f" !!! ERRO !!! Input {c + 1} -> TAG/ID errada ou inexistente!"
-
-                    # text.append(texto)
-
-            # for t in text:
-            # st.text(t)
-
-            # minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar)
-
-            print(URL)
-
-            QNTD = int(QNTD)
-
-            while QNTD > 0:
-                nova_url = f'\n{URL_base}{complemento}{LAST}'
-
-                sleep(4)
-
-                LAST += 1
-                QNTD -= 1
-                minerar(nova_url, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar, URL_base, complemento, True)
-
-            if not multiplas or QNTD == 0:
-
-                ultimo_scrap['nome'] = Nome
-                ultimo_scrap['TAG'] = tag
-                ultimo_scrap['ident_elemento'] = tEsp
-                ultimo_scrap['nome_ident'] = nEsp
-                ultimo_scrap['unica'] = unica
-
-                with open('ult_scrap.txt', 'w') as outfile:
-                    json.dump(ultimo_scrap, outfile)
-
-                st.header('Scrap utilizado:')
-                st.text(json.dumps(ultimo_scrap, indent=4))
-
-                st.header('Resultado do Scrape:')
-                texto_formatado = json.dumps(x, ensure_ascii=False).encode('utf8')
-                texto_indent_formatado = json.dumps(x, ensure_ascii=False, indent=4).encode('utf8')
-                st.text(texto_indent_formatado.decode())
-
-                # session_state.texto = x
-
-                if baixar == 'sim':
-                    for c in range(1, 200):
-                        if not os.path.isfile('scraps/scrap' + str(c) + '_result.json'):
-                            with open('scraps/scrap' + str(c) + '_config.json', 'w') as outfile:
-                                json.dump(ultimo_scrap, outfile)
-                            with open('scraps/scrap' + str(c) + '_result.json', 'w') as outfile:
-                                json.dump(x, outfile)
-                            break
-            else:
-                st.header('Ocorreu algum erro na solicitação.\n Código de resposta: ' + str(page.status_code))
-
-
 # Função 'main'
 def metodoManual(headers):
     global QNTD
@@ -249,14 +121,42 @@ def metodoManual(headers):
     # Variável responsável por receber os dados do último scrape
     data = ultimo_scrape()
 
+    pasta = './scraps'
+
+    scrapers = []
+    scrapers.append('')
+
+    for diretorio, subpastas, arquivos in os.walk(pasta):
+        for arquivo in arquivos:
+            # print(os.path.join(diretorio, arquivo))
+            if not 'result' in arquivo:
+                scrapers.append(arquivo)
+
+    # print(scrapers)
+
+    st.selectbox('Escolha um arquivo salvo de scrap', scrapers)
+
     # Escolher usar ou não o último scrape
     usar_ultimo(data)
 
     # URL/Link informada para scrape
     URL = st.text_input('URL do site', PRE_URL)
 
+    # with st.form("my_form"):
+    #     st.write("Inside the form")
+    #     slider_val = st.slider("Form slider")
+    #     checkbox_val = st.checkbox("Form checkbox")
+    #
+    #
+    #     submitted = st.form_submit_button("Submit")
+    #     if submitted:
+    #         st.write("slider", slider_val, "checkbox", checkbox_val)
+    #
+    # st.write("Outside the form")
+
     # Quantidade de inputs a ser scrapeado
-    qntd_inputs = st.text_input('Digite a quantidade de inputs (Por padrão é deixado 1)', PRE_QNTD)
+    qntd_inputs = st.number_input('Digite a quantidade de inputs', value=PRE_QNTD, min_value=1, max_value=10, step=1)
+    # qntd_inputs = st.text_input('Digite a quantidade de inputs (Por padrão é deixado 1)', PRE_QNTD)
 
     #
     # if qntd_inputs == '':
@@ -264,7 +164,7 @@ def metodoManual(headers):
 
     # agrupamento = st.radio(' Qual a forma de agrupamento a ser usada?', ('Linear', 'Conjuntos', 'Mista'))
 
-    espaco()
+    espaco(st)
 
     # Escolher se vai scrapear uma só página ou mais
     unicidade = st.radio('Página única ou múltipla?', ('única', 'múltipla'))
@@ -283,19 +183,18 @@ def metodoManual(headers):
             # URL_multiplas.append(URL)
             for c in range(int(qntd_pags)):
                 # URL_multiplas.append(f'{URL_base}{complemento}{c+2}')
-                st.text(f'\n{URL_base}{complemento}{c+2}')
+                st.text(f'\n{URL_base}{complemento}{c + 2}')
 
-    espaco()
+    espaco(st)
 
-    exemplo()
+    exemplo(st)
 
-    espaco()
+    espaco(st)
 
     #                                                                                          #
     #                      Início da criação das variáveis para guardar os inputs/tags         #
     #                      Até o momento o limite são 10 inputs                                #
     #                                                                                          #
-
 
     nome1 = nome2 = nome3 = nome4 = nome5 = nome6 = nome7 = nome8 = nome9 = nome10 = ''
     nome = [nome1, nome2, nome3, nome4, nome5, nome6, nome7, nome8,
@@ -345,14 +244,15 @@ def metodoManual(headers):
         if unica[c] == 'nao':
             tagsMultiplas(URL, headers, tipo_global, tipo_especifico, nome_especifico, c)
 
-        espaco()
+        espaco(st)
 
     # Opcionalidades para o usuário
     baixar = st.radio('Deseja baixar o arquivo .JSON?', ('nao', 'sim'))
     limpar = st.radio('Deseja forçar a deleção de "\ n" e "\ t"? ', ('nao', 'sim'))
 
     # Função principal de mineração
-    minerar(URL, headers, unica, qntd_inputs, tipo_global, tipo_especifico, nome, nome_especifico, baixar, limpar, URL_base, complemento, False)
+    minerar(URL, headers, unica, qntd_inputs, tipo_global, tipo_especifico, nome, nome_especifico, baixar, limpar,
+            URL_base, complemento, False, st, ultimo_scrap, 2, x, QNTD, text_save)
 
     # y = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'))
     # if y == 'sim':

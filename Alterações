@@ -24,8 +24,32 @@ Possibilidade de escolher tags/partes por botão
 Ex: Se tiver um texto interessante mas algum anúncio no meio que atrapalhe, usar radio ou outro
 para selecionar quais quer e quais não quer.
 
+>>> from PIL import Image
+>>> image = Image.open('sunrise.jpg')
+>>>
+>>> st.image(image, caption='Sunrise by the mountains')
 
-Organização para ao buscar tag e achar seu pai, aparecer de forma ordenada.
+
+
+>>> audio_file = open('myaudio.ogg', 'rb')
+>>> audio_bytes = audio_file.read()
+>>>
+>>> st.audio(audio_bytes, format='audio/ogg')
+
+
+>> video_file = open('myvideo.mp4', 'rb')
+>>> video_bytes = video_file.read()
+>>>
+>>> st.video(video_bytes)
+
+streamlit.file_uploader(label, type=None, accept_multiple_files=False, key=None, help=None)
+
+color = st.select_slider(
+    'Select a color of the rainbow',
+    options = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'])
+
+    st.write('My favorite color is', color)
+
 
 ##
 
@@ -77,11 +101,6 @@ Intermediário:
 - Nova janela para Carregamento do JSON
 
 
-
-- Possibilidade de salvar O último scrape para outro uso futuro
--> Último scrape salvo em um txt (mas em formato JSON)
-=> Tentar Carregar na pág
-
 19/05/2021
 
 - Projeto Comentado
@@ -111,3 +130,21 @@ Evolução em buscar elementos pelo conteúdo
 
 Minerar Manual
 - Tag de unicidade adicionada no JSON
+
+22/05/2021 - 23/05/2021
+
+Modularização, novas lógicas e novos layouts
+
+- Minerar, Exemplo e Espaco migrados para um package
+- Tentativa de colocar o funcionamento de recarregar em um package mal sucedido
+- Corrigido erro de DuplicateWidgetID no buscar texto
+- Iniciado lógica para separar elementos de uma div com muitos elementos {feita em parte}
+- Iniciado lógica para carregar scraps salvos (sem se restringir apenas ao último) -> Por enquanto só lista
+- Aparecendo itens que estão dentro de uma tag, com a possibilidade de escolher quais quer manter
+> possibilidade de selecionar tudo e remover aos poucos.
+
+Layout:
+- Dropdown para mostrar o último scrap
+- Exemplo melhorado (negrito)
+- Elemento próprio para JSON utilizado
+- Quantidade de inputs alterado para number.value
