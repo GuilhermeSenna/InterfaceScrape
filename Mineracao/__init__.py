@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 from time import sleep
 import json
 import os
+import streamlit as st
 
 # Função principal de mineração
-def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar, URL_base, complemento, multiplas, st, ultimo_scrap, LAST, x, QNTD, text_save):
+def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar, URL_base, complemento, multiplas, ultimo_scrap, LAST, x, QNTD, text_save):
     if st.button('Minerar', key=LAST) or multiplas:
 
         page = requests.get(URL, headers=headers)
@@ -19,8 +20,6 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
             ultimo_scrap['URL'] = URL
 
             ultimo_scrap['qntd_inputs'] = int(qntd)
-
-
 
             texto = ''
             text = []
@@ -41,10 +40,10 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
                     Nome.append(nome[c])
                     unica.append(unc[c])
 
-                    if unc[c] == 'sim':
+                    if unc[c]:
                         texto = soup.find(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]}).text
 
-                        if limpar == 'sim':
+                        if limpar:
                             x[nome[c]] = texto.strip().replace('\n', '').replace('\t', '')
                         else:
                             x[nome[c]] = texto.strip()
@@ -52,7 +51,7 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
                         textos = soup.findAll(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]})
                         for txt in textos:
                             # print(txt)
-                            if limpar == 'sim':
+                            if limpar:
                                 text.append(txt.text.replace('\n', '').replace('\t', ''))
                             else:
                                 text.append(txt.text)
@@ -84,7 +83,8 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
             while QNTD > 0:
                 nova_url = f'\n{URL_base}{complemento}{LAST}'
 
-                sleep(4)
+                with st.spinner('Carregando novas páginas...'):
+                    sleep(4)
 
                 LAST += 1
                 QNTD -= 1
@@ -98,20 +98,20 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
                 ultimo_scrap['nome_ident'] = nEsp
                 ultimo_scrap['unica'] = unica
 
-                with open('ult_scrap.txt', 'w') as outfile:
+                with open('scraps/ult_scrap.json', 'w') as outfile:
                     json.dump(ultimo_scrap, outfile)
 
                 st.header('Scrap utilizado:')
                 st.text(json.dumps(ultimo_scrap, indent=4))
 
                 st.header('Resultado do Scrape:')
-                texto_formatado = json.dumps(x, ensure_ascii=False).encode('utf8')
+                # texto_formatado = json.dumps(x, ensure_ascii=False).encode('utf8')
                 texto_indent_formatado = json.dumps(x, ensure_ascii=False, indent=4).encode('utf8')
                 st.json(texto_indent_formatado.decode())
 
                 # session_state.texto = x
 
-                if baixar == 'sim':
+                if baixar:
                     for c in range(1, 200):
                         if not os.path.isfile('scraps/scrap' + str(c) + '_result.json'):
                             with open('scraps/scrap' + str(c) + '_config.json', 'w') as outfile:
@@ -120,4 +120,4 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
                                 json.dump(x, outfile)
                             break
             else:
-                st.header('Ocorreu algum erro na solicitação.\n Código de resposta: ' + str(page.status_code))
+                st.error('Ocorreu algum erro na solicitação.\n Código de resposta: ' + str(page.status_code))

@@ -1,13 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import streamlit as st
 
 
-def espaco(st):
+def espaco():
     st.text('-=' * 45)
 
 
-def buscar_exemplo(headers, st, session_state):
+def buscar_exemplo(headers, session_state):
     st.title('Buscando exempo')
 
     link = st.text_input('URL')
@@ -94,5 +95,5 @@ def buscar_exemplo(headers, st, session_state):
 
                 espaco(st)
             else:
-                st.text('Nada encontrado :(')
+                st.error('Nada encontrado :(')
     pass

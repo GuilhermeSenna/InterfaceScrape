@@ -24,6 +24,8 @@ Possibilidade de escolher tags/partes por botão
 Ex: Se tiver um texto interessante mas algum anúncio no meio que atrapalhe, usar radio ou outro
 para selecionar quais quer e quais não quer.
 
+Tentar colocar cor
+
 >>> from PIL import Image
 >>> image = Image.open('sunrise.jpg')
 >>>
@@ -148,3 +150,25 @@ Layout:
 - Exemplo melhorado (negrito)
 - Elemento próprio para JSON utilizado
 - Quantidade de inputs alterado para number.value
+
+
+23/05/2021
+
+FrontEnd
+- Adaptação de Radio para Checkbox aonde necessário
+- Mensagem avisando que está carregando ao buscar múltiplas páginas
+- Adicionando Título e deixando o layout wide como padrão
+- Mensagem de erro estilizada
+- Streamlit.components importado + testes com HTML
+- Exemplo melhorado/estilizado
+
+BackEnd
+- Opção de escolher último scrap inserido na lista de scraps
+- Correção cast bool() não converte corretamente a string
+- Carregamento de JSON concluído com sucesso tanto as config quanto results
+- Agora todos os arquivos salvos são em JSON (Faltava o último)
+
+Front + Back
+- Carregar JSON continuado
+- Carrega arquivos
+- Gera tabela (ainda não está 100%)

@@ -22,8 +22,8 @@
     "a-icon a-icon-star-small a-star-small-5 aok-align-bottom"
   ],
   "unica": [
-    "nao",
-    "nao",
-    "nao"
+    false,
+    false,
+    false
   ]
 }

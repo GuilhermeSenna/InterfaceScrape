@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as stc
 import datetime
 from time import sleep
 import requests
@@ -30,16 +31,16 @@ text_save = []
 PRE_URL = ''
 PRE_QNTD = 1
 PRE_NOME = ['', '', '', '', '', '', '', '', '', '']
-PRE_UNICA = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+PRE_UNICA = [False, False, False, False, False, False, False, False, False, False]
 PRE_TAG = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 PRE_IDEEL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 PRE_NOIDE = ['', '', '', '', '', '', '', '', '', '']
 
 
 # Função que mostra o último scrape utilizado no topo da página
-def ultimo_scrape():
+def carregar(arquivo):
     try:
-        with open('ult_scrap.txt') as json_file:
+        with open(arquivo) as json_file:
             data = json.load(json_file)
 
         my_expander = st.beta_expander("Último Scrap usado:", expanded=True)
@@ -49,19 +50,9 @@ def ultimo_scrape():
 
         # st.subheader("Último Scrap usado:")
 
-
-
         return data
     except:
         pass
-
-
-# Função usada para perguntar para o usuário se ele quer usar ou não o último scrape
-def usar_ultimo(data):
-    ult = st.radio('Usar último scrape?', ('nao', 'sim'))
-
-    if ult == 'sim':
-        recarregar(data)
 
 
 # Função utilizada para recarregar na página o último scrape utilizado
@@ -80,8 +71,7 @@ def recarregar(data):
                       'outro'].index(PRE_TAG[k])
 
     for k, v in enumerate(data['unica']):
-        PRE_UNICA[k] = v
-        PRE_UNICA[k] = ['sim', 'nao'].index(PRE_UNICA[k])
+            PRE_UNICA[k] = v
 
     for k, v in enumerate(data['ident_elemento']):
         PRE_IDEEL[k] = v
@@ -111,36 +101,61 @@ def tagsMultiplas(URL, headers, tGlobal, tEspecifico, nEspecifico, c):
             st.text(item.text)
 
 
+# Config:
+# True: Utilizado para configurações
+# False: Usado para resultados
+def import_export(config):
+    pasta = './scraps'
+
+    scrapers = ['Nenhum']
+    if config:
+        scrapers.append('Último usado')
+
+        for diretorio, subpastas, arquivos in os.walk(pasta):
+            for arquivo in arquivos:
+                # print(os.path.join(diretorio, arquivo))
+                if not 'result' in arquivo:
+                    scrapers.append(arquivo)
+
+        # print(scrapers)
+
+        archive = st.selectbox('(opcional) Escolha um arquivo salvo de scrap', scrapers)
+
+        # Escolher usar ou não o último scrape
+        if archive != scrapers[0] and archive != scrapers[1]:
+            data = carregar('scraps/' + archive)
+            recarregar(data)
+        elif archive == scrapers[1]:
+            data = carregar('scraps/ult_scrap.json')
+            recarregar(data)
+    else:
+        for diretorio, subpastas, arquivos in os.walk(pasta):
+            for arquivo in arquivos:
+                # print(os.path.join(diretorio, arquivo))
+                if 'result' in arquivo:
+                    scrapers.append(arquivo)
+
+        archive = st.selectbox('Escolha um dos resultados de scrap', scrapers)
+
+        if archive != scrapers[0]:
+            data = carregar('scraps/' + archive)
+            return data
+            # recarregar(data)
+
+
+
 # Função 'main'
 def metodoManual(headers):
     global QNTD
 
-    # Coloca o título na página
-    st.title('Webscraping Manual')
+    st.title('Metodo manual')
 
-    # Variável responsável por receber os dados do último scrape
-    data = ultimo_scrape()
+    # oi = 'teste'
+    #
+    # stc.html(f'<h1 style="color: white;">{oi}</h1>')
 
-    pasta = './scraps'
-
-    scrapers = []
-    scrapers.append('')
-
-    for diretorio, subpastas, arquivos in os.walk(pasta):
-        for arquivo in arquivos:
-            # print(os.path.join(diretorio, arquivo))
-            if not 'result' in arquivo:
-                scrapers.append(arquivo)
-
-    # print(scrapers)
-
-    st.selectbox('Escolha um arquivo salvo de scrap', scrapers)
-
-    # Escolher usar ou não o último scrape
-    usar_ultimo(data)
-
-    # URL/Link informada para scrape
-    URL = st.text_input('URL do site', PRE_URL)
+    # with st.echo():
+    #     st.write('This code will be printed')
 
     # with st.form("my_form"):
     #     st.write("Inside the form")
@@ -154,25 +169,27 @@ def metodoManual(headers):
     #
     # st.write("Outside the form")
 
-    # Quantidade de inputs a ser scrapeado
+
+
+    # Variável responsável por receber os dados do último scrape
+    # print(data)
+
+    import_export(True)
+
+    # URL/Link informada para scrape
+    URL = st.text_input('URL do site', PRE_URL)
+
     qntd_inputs = st.number_input('Digite a quantidade de inputs', value=PRE_QNTD, min_value=1, max_value=10, step=1)
-    # qntd_inputs = st.text_input('Digite a quantidade de inputs (Por padrão é deixado 1)', PRE_QNTD)
 
-    #
-    # if qntd_inputs == '':
-    #     qntd_inputs = 1
-
-    # agrupamento = st.radio(' Qual a forma de agrupamento a ser usada?', ('Linear', 'Conjuntos', 'Mista'))
-
-    espaco(st)
+    espaco()
 
     # Escolher se vai scrapear uma só página ou mais
-    unicidade = st.radio('Página única ou múltipla?', ('única', 'múltipla'))
+    unicidade = st.radio('Página(s) única ou múltiplas?', ('única', 'múltiplas em sequência', 'múltiplas avulsas'))
 
     URL_base = complemento = ''
 
     # Lógica para múltiplas
-    if unicidade == 'múltipla':
+    if unicidade == 'múltiplas em sequência':
         URL_base = st.text_input('URL de base ex: "google.com.br": ')
 
         complemento = st.text_input('Complemento do URL: ')
@@ -184,12 +201,19 @@ def metodoManual(headers):
             for c in range(int(qntd_pags)):
                 # URL_multiplas.append(f'{URL_base}{complemento}{c+2}')
                 st.text(f'\n{URL_base}{complemento}{c + 2}')
+    elif unicidade == 'múltiplas avulsas':
+        paginas = st.text_area('Digite as páginas')
 
-    espaco(st)
+        if st.button('teste'):
+            for pagina in paginas:
+                print(pagina)
 
-    exemplo(st)
+    espaco()
 
-    espaco(st)
+
+    exemplo()
+
+    espaco()
 
     #                                                                                          #
     #                      Início da criação das variáveis para guardar os inputs/tags         #
@@ -225,7 +249,8 @@ def metodoManual(headers):
         nome[c] = st.text_input('Nome associado ao input (ex: Título, preço, Descrição, etc...) ', PRE_NOME[c], key=c)
 
         # Tag única ou não
-        unica[c] = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'), PRE_UNICA[c],
+
+        unica[c] = st.checkbox('tag única? (Não há outras tags com o mesmo identificador)', PRE_UNICA[c],
                             key=c)
 
         # Tipo da tag usada
@@ -241,18 +266,18 @@ def metodoManual(headers):
         nome_especifico[c] = st.text_input(" Nome do identificador usado", PRE_NOIDE[c], key=c)
 
         # Debug para caso haja múltiplas tags a serem obtidas
-        if unica[c] == 'nao':
+        if not unica[c]:
             tagsMultiplas(URL, headers, tipo_global, tipo_especifico, nome_especifico, c)
 
-        espaco(st)
+        espaco()
 
     # Opcionalidades para o usuário
-    baixar = st.radio('Deseja baixar o arquivo .JSON?', ('nao', 'sim'))
-    limpar = st.radio('Deseja forçar a deleção de "\ n" e "\ t"? ', ('nao', 'sim'))
+    baixar = st.checkbox('Deseja baixar o arquivo .JSON?')
+    limpar = st.checkbox('Deseja forçar a deleção de "\ n" e "\ t"? ')
 
     # Função principal de mineração
     minerar(URL, headers, unica, qntd_inputs, tipo_global, tipo_especifico, nome, nome_especifico, baixar, limpar,
-            URL_base, complemento, False, st, ultimo_scrap, 2, x, QNTD, text_save)
+            URL_base, complemento, False, ultimo_scrap, 2, x, QNTD, text_save)
 
     # y = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'))
     # if y == 'sim':
@@ -261,26 +286,62 @@ def metodoManual(headers):
     #     json.dump(texto_formatado, outfile)
 
 
+def carregamento_JSON():
+    st.title('Carregamento de JSON')
+
+    try:
+        data = import_export(False)
+
+        tabela = st.checkbox('Gerar tabela')
+
+        cont = -1
+        verificar = False
+
+
+        teste = []
+        for i, (key, value) in enumerate(data.items()):
+            # print(key, len([item for item in value if item]))
+
+            teste.append(value)
+
+            if cont == -1:
+                cont = len([item for item in value if item])
+            elif cont == len([item for item in value if item]):
+                verificar = True
+            else:
+                verificar = False
+
+        if verificar:
+            st.success('Todos os atributos possuem a mesma quantidade de itens')
+        else:
+            st.warning('Há atributos com quantidade de itens diferentes')
+
+        for c in range(len(teste[0])):
+            cols = st.beta_columns(4)
+            cols[0].write(f'{teste[0][c]}')
+            cols[1].write(f'{teste[1][c]}')
+
+    except:
+        pass
+
+
+
 def main():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36', }
 
+    st.set_page_config(page_title='Data Science', layout='wide')
+
     st.sidebar.title('Menu')
 
-    selected = st.sidebar.radio('Selecione a página', ['Manual', 'Automatico', 'Carregar JSON', 'Buscar exemplo'])
+    selected = st.sidebar.radio('Selecione a página', ['Manual', 'Carregar JSON', 'Buscar exemplo'])
 
     if selected == 'Manual':
         metodoManual(headers)
     elif selected == 'Carregar JSON':
-        st.title('Carregamento de JSON')
-
-        if st.button('teste'):
-            with open('scraps/scrap8_result.json') as json_file:
-                data = json.load(json_file)
-                # print(data['Titulo'])
-                # print(json.dumps(data, indent=4))
+        carregamento_JSON()
     elif selected == 'Buscar exemplo':
-        buscar_exemplo(headers, st, session_state)
+        buscar_exemplo(headers, session_state)
     else:
         st.title('Webscraping Automatico')
 
