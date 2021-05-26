@@ -1,0 +1,61 @@
+Uol Noticias -> OK, Com resíduo
+
+ <p><a href="https://www.youtube.com/uol" rel="noopener" target="_blank">Você pode assistir a toda a programação do Canal UOL aqui</a></p>
+
+
+Folha -> Ok
+
+metrópoles -> Bloqueado pelo Cloudfare
+
+estadão -> OK
+
+Istoé -> Médio, puxando muitos resíduos
+
+O globo -> Ok
+
+Os de baixo estão dividindo a seção em blocos
+
+IG -> Puxando em partes
+
+Veja -> Puxando em partes
+
+globo.com -> Puxando em partes
+
+yahoo -> Ok, com resíduos
+
+Bol -> Médio, Puxando cortando a primeira parte
+
+R7 -> Ok
+
+Terra -> Ok
+
+g1 -> Acha tag mas não captura as demais
+
+Exame -> Ok, com muitos resíduos
+
+Gazeta do povo -> Médio, Puxando cortando a primeira parte
+
+Portal do Holanda -> Ok, com resíduos
+
+L! -> Puxa o texto de uma tag única, printa outro texto
+
+Globoesporte.com -> Puxando em partes
+
+Band -> Puxando em partes
+
+Época -> Cortando parte de cima
+
+Correio -> Todo o texto numa tag só, erro na hora de puxar
+
+UAI -> Muitas tags emboladas, checar depois
+
+Tecmundo -> Retorna caracteres estranhos
+
+Olhar digital -> Acha, mas puxa errado
+
+Techtudo -> Acha, mas não puxa
+
+BBC -> Puxando em partes
+
+CNN -> Cortando a parte de cima
+

@@ -172,3 +172,13 @@ Front + Back
 - Carregar JSON continuado
 - Carrega arquivos
 - Gera tabela (ainda não está 100%)
+
+
+26/05/2021
+- Ignora retorno ruins ao puxar texto, puxando vazio ou None, facilita ao escolher itens ruins
+- Falta retirar resíduos
+- Correção em encodificação/decodificação UTF-8, vindo quebrada
+- printa texto formatado
+- Adicionado Strip() para corrigir textos com espaços longos
+- Corrigido erro de DuplicateWidgetID caso seja escolhido 2 tags pais diferentes
+- Feito testes em diversos sites, funcionando bem ou parcialmente na maioria

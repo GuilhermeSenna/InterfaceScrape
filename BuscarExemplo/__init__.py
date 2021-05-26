@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import streamlit as st
+from ftfy import fix_encoding
 import unicodedata
 
 
@@ -29,7 +30,7 @@ def buscar_exemplo(headers, session_state):
 
         if page.status_code == 200:
             # unicodedata.normalize('NFKD', page.text).encode('ascii', 'ignore').decode('utf8')
-            soup = BeautifulSoup(page.text, 'html.parser')
+            soup = BeautifulSoup(fix_encoding(page.text), 'html.parser')
 
             if len(soup.findAll(text=re.compile(teste, re.IGNORECASE))) != 0:
                 for v, t in enumerate(soup.findAll(text=re.compile(teste, re.UNICODE))):
@@ -48,8 +49,11 @@ def buscar_exemplo(headers, session_state):
                     if mostrar_pai == 'sim':
                         # st.text(t.parent.parent)
 
+                        # Limpando as string obtidas, que retorna vazio o none
                         for tste in t.parent.parent:
-                            filhos.append(tste)
+                            if str(tste.string).strip() and tste.string is not None:
+                                filhos.append(tste)
+                                # print(tste)
 
                         container = st.beta_container()
                         all = st.checkbox("Select all", key=v)
@@ -60,6 +64,20 @@ def buscar_exemplo(headers, session_state):
                         else:
                             selected_options = container.multiselect("Selecione uma ou mais opções:",
                                                                      filhos, key=v)
+
+                        tester = ''
+                        if st.button('Printar', key=v):
+                            for t in selected_options:
+                                # HTML pra usar depois talvez como PDF
+                                # print(t)
+                                tester += f'{t.string.strip()}\n\n'
+
+                            st.write(f'{tester}')
+                            print(tester)
+
+
+
+
 
                         # st.text(t.parent.parent.text)
                         # for t in t.parent.parent.findAll('p'):
