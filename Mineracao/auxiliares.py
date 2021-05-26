@@ -21,11 +21,11 @@ def exemplo():
 
     st.subheader("Exemplo de preenchimento dos inputs")
     st.markdown(
-        f'<p style=" color: white;">&lt<span style="color: aquamarine;">p </span><span style="color: chartreuse;">'
+        f'<p style=" color: white;">&lt<span style="color: yellow;">p </span><span style="color: chartreuse;">'
         'class</span>="<span style="color: darkorchid;">paragraph</span>"&gt'
-        ' Paragrafo qualquer &lt/<span style="color: aquamarine;">p</span>&gt</p>', unsafe_allow_html=True)
+        ' Paragrafo qualquer &lt/<span style="color: yellow;">p</span>&gt</p>', unsafe_allow_html=True)
 
     # st.text('<p class="paragraph"> Paragrafo qualquer </p> ')
-    st.markdown('**Tag:** <span style="color: aquamarine;">p </span>', unsafe_allow_html=True)
+    st.markdown('**Tag:** <span style="color: yellow;">p </span>', unsafe_allow_html=True)
     st.markdown('**Identificador usado:** </span><span style="color: chartreuse;">class</span>', unsafe_allow_html=True)
     st.markdown('**Nome do identificador:** <span style="color: darkorchid;">paragraph</span>', unsafe_allow_html=True)

@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import streamlit as st
+import unicodedata
 
 
 def espaco():
@@ -27,12 +28,13 @@ def buscar_exemplo(headers, session_state):
             page = session_state.req
 
         if page.status_code == 200:
+            # unicodedata.normalize('NFKD', page.text).encode('ascii', 'ignore').decode('utf8')
             soup = BeautifulSoup(page.text, 'html.parser')
 
             if len(soup.findAll(text=re.compile(teste, re.IGNORECASE))) != 0:
-                for v, t in enumerate(soup.findAll(text=re.compile(teste, re.IGNORECASE))):
+                for v, t in enumerate(soup.findAll(text=re.compile(teste, re.UNICODE))):
 
-                    espaco(st)
+                    espaco()
 
                     # st.text(t)
 
@@ -93,7 +95,7 @@ def buscar_exemplo(headers, session_state):
                     except:
                         pass
 
-                espaco(st)
+                espaco()
             else:
                 st.error('Nada encontrado :(')
     pass

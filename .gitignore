@@ -114,3 +114,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+teste p.py
+teste paginas.py
+teste acento.py
