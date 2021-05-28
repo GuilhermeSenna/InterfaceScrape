@@ -22,7 +22,7 @@ def gerar_textos(t, v):
     englobado = st.checkbox('Selecione se está dividido em partes (provavelmente gerará mais resíduos)', key=v)
 
     if englobado:
-        separar = st.checkbox('Tentar separar os paragráfos (pode ajudar ou melhorar)', key=v)
+        separar = st.checkbox('Tentar separar os paragráfos (pode ajudar ou piorar)', key=v)
 
     if englobado:
 
