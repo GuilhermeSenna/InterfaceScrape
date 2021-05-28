@@ -1,14 +1,8 @@
 Futuro:
 
-Criar um programa que reconheça diferenças entre as próximas páginas
-Pegar a página principal e 2 seguintes para saber
-
 Input área para múltiplas páginas (mesmo site)
 
 Puxar imagens, links
-
-Botão pra aparecer parte do código, ao clicar ativa True para aparecer e ao clicar novamente False desaparece. Usar Session
-> Lógica similar usada para aparecer a tag pai
 
 Pagina para carregar o JSON e analisar os dados
 
@@ -17,21 +11,18 @@ soup.find_all('img') <- Pega todas as imagens da página
 print(soup.get_text()) <- Pega todo o testo da página
 
 Usar nova lógica de buscar elementos para:
--> Usar lógica para buscar elementos próximos a ele
+-> Usar lógica para buscar elementos próximos a ele (mal implementado)
 
-Possibilidade de escolher tags/partes por botão
+biblioteca para acentuação
 
-Ex: Se tiver um texto interessante mas algum anúncio no meio que atrapalhe, usar radio ou outro
-para selecionar quais quer e quais não quer.
+Guardar class/id de sites em JSON, guardar também para ignorar textos desnecessários
 
-Tentar colocar cor
+Montar lógica para ML, carregando JSON
 
 >>> from PIL import Image
 >>> image = Image.open('sunrise.jpg')
 >>>
 >>> st.image(image, caption='Sunrise by the mountains')
-
-
 
 >>> audio_file = open('myaudio.ogg', 'rb')
 >>> audio_bytes = audio_file.read()
@@ -182,3 +173,12 @@ Front + Back
 - Adicionado Strip() para corrigir textos com espaços longos
 - Corrigido erro de DuplicateWidgetID caso seja escolhido 2 tags pais diferentes
 - Feito testes em diversos sites, funcionando bem ou parcialmente na maioria
+
+28/05/2021
+- Buscar exemplo agora é flexível o nível de generalização em que buscará as tags similares
+> Dessa forma sites que deixam textos separados em blocos podem ser obtidos os textos completos
+- "Mostrar tag pai" alterado para checkbox
+- Mostra tag filho e pai
+- Nova checkbox para tags dividida em partes
+- Adicionado para escolher itens ruins em tags agrupadas
+- Nova opção extra junto da divisão em partes, para separar em paragrafos (não está 100% ainda)
