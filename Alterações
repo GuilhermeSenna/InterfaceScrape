@@ -19,6 +19,14 @@ Guardar class/id de sites em JSON, guardar também para ignorar textos desnecess
 
 Montar lógica para ML, carregando JSON
 
+Adicionar préfixo e sufixo para as páginas em sequência
+
+Melhorar lógica existente do buscar exemplo
+
+Carregar JSON:
+
+
+
 >>> from PIL import Image
 >>> image = Image.open('sunrise.jpg')
 >>>

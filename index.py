@@ -243,7 +243,7 @@ def metodoManual(headers):
     # Gerando inputs dinamicamente
     for c in range(0, int(qntd_inputs)):
         # Informando o nº do input a ser preenchido
-        st.subheader('input ' + str(c + 1))
+        st.header('input ' + str(c + 1))
 
         # Nome da variável, afim de registrar no JSON
         nome[c] = st.text_input('Nome associado ao input (ex: Título, preço, Descrição, etc...) ', PRE_NOME[c], key=c)
