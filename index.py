@@ -6,7 +6,6 @@ import requests
 from bs4 import BeautifulSoup
 import SessionState
 import os.path
-from autoscraper import AutoScraper
 import json
 from BuscarExemplo import buscar_exemplo
 from Mineracao import minerar

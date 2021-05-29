@@ -122,69 +122,94 @@ def gerar_textos(t, v):
 
 
 def buscar_exemplo(headers, session_state):
+
+    # Título para a página
     st.title('Buscando exempo')
 
+    # Link/URL para a página a ser scrapeada
     link = st.text_input('URL')
 
-    teste = st.text_input('Texto a ser buscado')
+    # Texto a ser buscado na página
+    texto = st.text_input('Texto a ser buscado')
 
+    # Slider para ser escolhido o nível de generalização
     select_slider = st.slider('Nível de generalização', 0, 10)
 
+    # Caso clique no botão de buscar ou o último link digitado for igual ao atual
+    # Checa se é igual ao atual para não fazer a mesma requisição novamente
+    # Pois está fica salva
     if st.button('Buscar') or session_state.last_URL == link:
-
-        # st.text(select_slider)
 
         # Checando se o último request do usuário foi feito usando o mesmo Link
         if session_state.last_URL != link:
             session_state.last_URL = link
+
+            # Caso não seja ela salva no session para checar posteriormente
             session_state.req = page = requests.get(link, headers=headers)
         else:
             page = session_state.req
 
+        # Caso o código da requisição seja 200
         if page.status_code == 200:
+
+            # Lógica tentada para checagem com acentuação
             # unicodedata.normalize('NFKD', page.text).encode('ascii', 'ignore').decode('utf8')
+
+            # Correção para possíveis problemas com UTF-8
             soup = BeautifulSoup(fix_encoding(page.text), 'html.parser')
 
-            if len(soup.findAll(text=re.compile(teste, re.IGNORECASE))) != 0:
-                for v, t in enumerate(soup.findAll(text=re.compile(teste, re.UNICODE))):
+            # Checa se achou algum texto na página com o texto informado a procurar
+            # O re.compile e o re.IGNORECASE servem para ignorar Case Sensitive
+            if len(soup.findAll(text=re.compile(texto, re.IGNORECASE))) != 0:
 
+                # v = Usada para colocar no ID dos widgets, evitando erro de duplicação
+                # t = Texto achado
+                # UNICODE é para ter uma lógica parecida da anterior
+                for v, t in enumerate(soup.findAll(text=re.compile(texto, re.UNICODE))):
+
+                    # Linha horizontal
                     st.markdown('---')
 
-                    # st.text(t)
-
-                    # st.text(t.parent)
-                    #
-                    # TAG
-                    # st.text(t.parent.name)
-
+                    # Mostra o filho
                     st.text(f'Filho: {t}')
 
+                    # Pergunta se quer mostrar a tag pai
                     mostrar_pai = st.checkbox('Mostrar tag pai?', key=v)
 
+                    # Caso queira mostrar a tag pai
                     if mostrar_pai:
-                        # st.text(t.parent.parent)
 
-                        x = t
+                        # Vai indo pra tag mais externa dependendo do valor do slider (generalização)
                         for c in range(select_slider):
-                            x = x.parent
+                            t = t.parent
 
-                        gerar_textos(x, v)
+                        # Função principal para gerar textos
+                        gerar_textos(t, v)
 
                     try:
 
-                        tag = x.name
+                        # Captura o nome da tag atual
+                        tag = t.name
 
-                        i = x.attrs
-                        # st.text(i['class'])
+                        # Captura os atributos daquela tag, como class e ID
+                        i = t.attrs
 
+                        # Vai usar a classe porque ID não se repete
+                        # coloca a variável para receber a(s) classe(s)
                         classe = ''
 
+                        # Lógica para armazena se houver mais de uma classe na tag
                         for x in i['class']:
                             classe += x
                             classe += ' '
+
+                        # Printa a classe completa
                         st.text(f'class = {classe}')
+
+                        # Método strip() na classe
                         classe = classe.strip()
 
+                        # Tenta buscar outros elementos com a mesma classe (não funcional)
                         if st.button('Buscar outros com essa class'):
                             soup = BeautifulSoup(page.text, 'html.parser')
                             tst = soup.find(tag, attrs={'class': classe})
@@ -192,7 +217,9 @@ def buscar_exemplo(headers, session_state):
                     except:
                         pass
 
+                # Linha horizontal
                 st.markdown('---')
             else:
+
+                # Mensagem de erro caso não ache nenhuma informação sobre o texto buscado
                 st.error('Nada encontrado :(')
-    pass
