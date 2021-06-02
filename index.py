@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as stc
 import datetime
-from time import sleep
+import time
 import requests
 from bs4 import BeautifulSoup
 import SessionState
@@ -354,68 +354,72 @@ def main():
             img = Image.open(uploaded_file)
 
         # img = Image.new('RGB', (1000, 800), color=(73, 109, 137))
-        draw = ImageDraw.Draw(img)
+            draw = ImageDraw.Draw(img)
 
-        imgWidth, imgHeight = img.size
+            imgWidth, imgHeight = img.size
 
-        # print(width)
+            # print(width)
 
 
-        text = st.text_input("Texto a inserir na imagem")
-        tamanho_fonte = st.slider('Selecione o tamanho da fonte', 6, 120, 32)
-        font = ImageFont.truetype("arial.ttf", tamanho_fonte)
-        shadowColor = 'black'
-        textColor = 'white'
+            text = st.text_input("Texto a inserir na imagem")
 
-        txtWidth, txtHeight = draw.textsize(text, font=font)
+            colA, colB = st.beta_columns(2)
+            centralizar_x = colA.checkbox('Centralizar no eixo x?')
+            centralizar_y = colB.checkbox('Centralizar no eixo y?')
 
-        st.markdown('---')
+            col1, col2 = st.beta_columns(2)
+            tamanho_fonte = col2.slider('Selecione o tamanho da fonte', 6, 120, 32)
+            font = ImageFont.truetype("arial.ttf", tamanho_fonte)
+            shadowColor = 'black'
+            textColor = 'white'
 
-        centralizar_x = st.checkbox('Centralizar no eixo x?')
+            txtWidth, txtHeight = draw.textsize(text, font=font)
 
-        eixo_x = eixo_y = 0
-        if centralizar_x:
-            eixo_x = (imgWidth - txtWidth)//2
-        x_slider = st.slider('Eixo X', 0, imgWidth - txtWidth, eixo_x)
+            # st.markdown('---')
 
-        st.markdown('---')
+            eixo_x = eixo_y = 0
+            if centralizar_x:
+                eixo_x = (imgWidth - txtWidth)//2
+            x_slider = col2.slider('Eixo X', 0, imgWidth - txtWidth, eixo_x)
 
-        centralizar_y = st.checkbox('Centralizar no eixo y?')
-        if centralizar_y:
-            eixo_y = (imgWidth - txtWidth)//2
+            # st.markdown('---')
 
-        y_slider = st.slider('Eixo Y', 0, imgHeight - txtHeight, eixo_y)
 
-        x = imgWidth - txtWidth - (imgWidth - txtWidth - x_slider)
-        y = imgHeight - txtHeight - y_slider
+            if centralizar_y:
+                eixo_y = (imgHeight - txtHeight)//2
 
-        for adj in range(3):
-            # move right
-            draw.text((x - adj, y), text, font=font, fill=shadowColor)
-            # move left
-            draw.text((x + adj, y), text, font=font, fill=shadowColor)
-            # move up
-            draw.text((x, y + adj), text, font=font, fill=shadowColor)
-            # move down
-            draw.text((x, y - adj), text, font=font, fill=shadowColor)
-            # diagnal left up
-            draw.text((x - adj, y + adj), text, font=font, fill=shadowColor)
-            # diagnal right up
-            draw.text((x + adj, y + adj), text, font=font, fill=shadowColor)
-            # diagnal left down
-            draw.text((x - adj, y - adj), text, font=font, fill=shadowColor)
-            # diagnal right down
-            draw.text((x + adj, y - adj), text, font=font, fill=shadowColor)
+            y_slider = col2.slider('Eixo Y', 0, imgHeight - txtHeight, eixo_y)
 
-        d = ImageDraw.Draw(img)
-        # d.text((imgWidth/2, imgHeight-80), "Hello World", fill=(255, 255, 0))
+            x = imgWidth - txtWidth - (imgWidth - txtWidth - x_slider)
+            y = imgHeight - txtHeight - y_slider
 
-        # create normal text on image
-        draw.text((x, y), text, font=font, fill=textColor)
+            for adj in range(3):
+                # move right
+                draw.text((x - adj, y), text, font=font, fill=shadowColor)
+                # move left
+                draw.text((x + adj, y), text, font=font, fill=shadowColor)
+                # move up
+                draw.text((x, y + adj), text, font=font, fill=shadowColor)
+                # move down
+                draw.text((x, y - adj), text, font=font, fill=shadowColor)
+                # diagnal left up
+                draw.text((x - adj, y + adj), text, font=font, fill=shadowColor)
+                # diagnal right up
+                draw.text((x + adj, y + adj), text, font=font, fill=shadowColor)
+                # diagnal left down
+                draw.text((x - adj, y - adj), text, font=font, fill=shadowColor)
+                # diagnal right down
+                draw.text((x + adj, y - adj), text, font=font, fill=shadowColor)
 
-        # img.save('pil_text.png')
+            d = ImageDraw.Draw(img)
+            # d.text((imgWidth/2, imgHeight-80), "Hello World", fill=(255, 255, 0))
 
-        st.image(img, caption='Teste de imagem')
+            # create normal text on image
+            draw.text((x, y), text, font=font, fill=textColor)
+
+            # img.save('pil_text.png')
+
+            col1.image(img, caption='Teste de imagem')
     else:
         st.title('Webscraping Automatico')
 
