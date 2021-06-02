@@ -10,6 +10,7 @@ import json
 from BuscarExemplo import buscar_exemplo
 from Mineracao import minerar
 from Mineracao.auxiliares import exemplo, espaco
+from PIL import Image, ImageDraw, ImageFont
 
 # lyrics += str(lyric).lower().replace('<p>', '').replace('</p>', '').replace('<br/>', ' ').replace('(', '').replace(')', '').replace(',', '') + ' '
 
@@ -333,7 +334,7 @@ def main():
 
     st.sidebar.title('Menu')
 
-    selected = st.sidebar.radio('Selecione a página', ['Manual', 'Carregar JSON', 'Buscar exemplo'])
+    selected = st.sidebar.radio('Selecione a página', ['Manual', 'Carregar JSON', 'Buscar exemplo', 'Imagem'])
 
     if selected == 'Manual':
         metodoManual(headers)
@@ -341,6 +342,80 @@ def main():
         carregamento_JSON()
     elif selected == 'Buscar exemplo':
         buscar_exemplo(headers, session_state)
+    elif selected == 'Imagem':
+        # image = Image.open('sunrise.jpg')
+
+        st.title('Edição de imagem')
+
+        img = Image.new('RGB', (0, 0))
+
+        uploaded_file = st.file_uploader("Choose a file")
+        if uploaded_file is not None:
+            img = Image.open(uploaded_file)
+
+        # img = Image.new('RGB', (1000, 800), color=(73, 109, 137))
+        draw = ImageDraw.Draw(img)
+
+        imgWidth, imgHeight = img.size
+
+        # print(width)
+
+
+        text = st.text_input("Texto a inserir na imagem")
+        tamanho_fonte = st.slider('Selecione o tamanho da fonte', 6, 120, 32)
+        font = ImageFont.truetype("arial.ttf", tamanho_fonte)
+        shadowColor = 'black'
+        textColor = 'white'
+
+        txtWidth, txtHeight = draw.textsize(text, font=font)
+
+        st.markdown('---')
+
+        centralizar_x = st.checkbox('Centralizar no eixo x?')
+
+        eixo_x = eixo_y = 0
+        if centralizar_x:
+            eixo_x = (imgWidth - txtWidth)//2
+        x_slider = st.slider('Eixo X', 0, imgWidth - txtWidth, eixo_x)
+
+        st.markdown('---')
+
+        centralizar_y = st.checkbox('Centralizar no eixo y?')
+        if centralizar_y:
+            eixo_y = (imgWidth - txtWidth)//2
+
+        y_slider = st.slider('Eixo Y', 0, imgHeight - txtHeight, eixo_y)
+
+        x = imgWidth - txtWidth - (imgWidth - txtWidth - x_slider)
+        y = imgHeight - txtHeight - y_slider
+
+        for adj in range(3):
+            # move right
+            draw.text((x - adj, y), text, font=font, fill=shadowColor)
+            # move left
+            draw.text((x + adj, y), text, font=font, fill=shadowColor)
+            # move up
+            draw.text((x, y + adj), text, font=font, fill=shadowColor)
+            # move down
+            draw.text((x, y - adj), text, font=font, fill=shadowColor)
+            # diagnal left up
+            draw.text((x - adj, y + adj), text, font=font, fill=shadowColor)
+            # diagnal right up
+            draw.text((x + adj, y + adj), text, font=font, fill=shadowColor)
+            # diagnal left down
+            draw.text((x - adj, y - adj), text, font=font, fill=shadowColor)
+            # diagnal right down
+            draw.text((x + adj, y - adj), text, font=font, fill=shadowColor)
+
+        d = ImageDraw.Draw(img)
+        # d.text((imgWidth/2, imgHeight-80), "Hello World", fill=(255, 255, 0))
+
+        # create normal text on image
+        draw.text((x, y), text, font=font, fill=textColor)
+
+        # img.save('pil_text.png')
+
+        st.image(img, caption='Teste de imagem')
     else:
         st.title('Webscraping Automatico')
 
