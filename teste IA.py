@@ -1,13 +1,20 @@
 import csv
 from collections import defaultdict
+from itertools import islice, combinations
+from copy import deepcopy
 
+aux_regra = ''
+regra = []
+ultimo_nome = ''
 
 def calcular_probabilidade(valor, total):
     return f'{(valor/total)*100:.2f}'
 
 
-def mostrar_probabilidade(nomes, printar):
-    for n in nomes:
+def mostrar_probabilidade(nomes, printar, ultimo):
+    print(ultimo)
+    global aux_regra, regra
+    for x, n in enumerate(nomes):
         lista = []
         dicionario = {}
         total = 0
@@ -30,15 +37,36 @@ def mostrar_probabilidade(nomes, printar):
                 dicionario['total'] = total
 
         if printar:
-            print('-=' * 50)
-            print(n)
+            # print('-=' * 50)
+            # print(n)
             for key, value in dicionario.items():
-                print(f'{key} -> {value}x, {calcular_probabilidade(value, dicionario["total"])}%')
+                # print(f'{key} -> {value}x, {calcular_probabilidade(value, dicionario["total"])}%')
+                if x+1 == len(nomes):
+                    if key != 'total' and int(float(calcular_probabilidade(value, dicionario["total"]))) == 100:
+                        aux_regra += f' {key}'
+                        regra.append(aux_regra)
+                        aux_regra = ''
+
+
+                    else:
+                        aux_regra = ''
+                else:
+                    if key != 'total':
+                        if aux_regra == '':
+                            aux_regra = f'REGRA: {key} ->'
+                        else:
+                            aux_regra += f' {key} ->'
+
+                # print(aux_regra)
+
+                # if key != 'total' and int(float(calcular_probabilidade(value, dicionario["total"]))) == 100:
+                #     print(f'Regra: {key} -> {value}')
 
 
 def retirar_ocorrencias(nomes, variavel, valor):
     # Essa lógica permite remover todas as ocorrências que não forem a escolhida
     # Para poder criar uma lógica
+    # print(nomes)
     indices = [i for i, x in enumerate(nomes[variavel]) if x != valor]
 
     for key, value in nomes.items():
@@ -79,8 +107,60 @@ with open(filename, 'r') as data:
 
 # 1º Passa o dicionário
 # 2º Perguntar se quer printar ou não
-mostrar_probabilidade(nomes, False)
 
-nomes = retirar_ocorrencias(nomes, 'contact-lenses', 'soft')
+# mostrar_probabilidade(nomes, False)
 
-mostrar_probabilidade(nomes, True)
+'''
+for c in range(len(nomes)-2):
+    comb = combinations(nomes, c+1)
+
+    for i in list(comb):
+        aux_nomes = deepcopy(nomes)
+        for k in i:
+            aux_nomes.pop(k, None)
+        # print(aux_nomes)
+        for i, nome in enumerate(aux_nomes):
+            # print('=-'*20)
+            # print(nome)
+            mylist = list(set(aux_nomes[nome]))
+            # print(mylist)
+            for item in mylist:
+                aux_nomes2 = deepcopy(aux_nomes)
+                aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+                mostrar_probabilidade(aux_nomes2, True)
+
+
+            if i+1 == len(aux_nomes):
+                break
+'''
+
+aux_nomes = deepcopy(nomes)
+aux_nomes.pop('age', None)
+for i, nome in enumerate(aux_nomes):
+    mylist = list(set(aux_nomes[nome]))
+    for item in mylist:
+        aux_nomes2 = deepcopy(aux_nomes)
+        aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+        mostrar_probabilidade(aux_nomes2, True, item)
+
+
+
+# Remover chave do dicionário pelo index
+# del nomes[next(islice(nomes, 0, None))]
+
+
+# for nome in nomes:
+#     mylist = list(set(nomes[nome]))
+#     for item in mylist:
+#         aux_nomes = deepcopy(nomes)
+#         aux_nomes = retirar_ocorrencias(aux_nomes, nome, item)
+#         mostrar_probabilidade(aux_nomes, True)
+#         # print(item)
+#         # print(regra)
+#
+#     break
+
+# print(nomes)
+# nomes = retirar_ocorrencias(nomes, 'tear-prod-rate', 'reduced')
+
+# mostrar_probabilidade(nomes, True)
