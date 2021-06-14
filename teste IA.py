@@ -50,7 +50,7 @@ def retirar_ocorrencias(nomes, variavel, valor):
     return nomes
 
 
-filename = "student-mat.csv"
+filename = "lenses.csv"
 
 # opening the file using "with"
 # statement
@@ -59,6 +59,7 @@ keys_list = None
 dates_dict = defaultdict(list)
 with open(filename, 'r') as data:
     for key, line in enumerate(csv.reader(data)):
+        # atributos = line[0].split(';')
         atributos = line[0].split(';')
 
         # Atribuindo as variaveis para o dicionário (Como nome, sexo, etc..)
@@ -76,9 +77,10 @@ with open(filename, 'r') as data:
             for x in dates_dict:
                 nomes[f'{keys_list[x]}'] = dates_dict[x]
 
-
 # 1º Passa o dicionário
 # 2º Perguntar se quer printar ou não
 mostrar_probabilidade(nomes, False)
+
+nomes = retirar_ocorrencias(nomes, 'contact-lenses', 'soft')
 
 mostrar_probabilidade(nomes, True)
