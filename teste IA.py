@@ -7,12 +7,15 @@ aux_regra = ''
 regra = []
 ultimo_nome = ''
 
+
+def symmetric_difference(a, b):
+    return {*a} ^ {*b}
+
 def calcular_probabilidade(valor, total):
     return f'{(valor/total)*100:.2f}'
 
 
 def mostrar_probabilidade(nomes, printar, ultimo):
-    print(ultimo)
     global aux_regra, regra
     for x, n in enumerate(nomes):
         lista = []
@@ -44,6 +47,7 @@ def mostrar_probabilidade(nomes, printar, ultimo):
                 if x+1 == len(nomes):
                     if key != 'total' and int(float(calcular_probabilidade(value, dicionario["total"]))) == 100:
                         aux_regra += f' {key}'
+                        # print(aux_regra)
                         regra.append(aux_regra)
                         aux_regra = ''
 
@@ -148,20 +152,48 @@ for i, nome in enumerate(aux_nomes):
 
 
 
-allNames = sorted(aux_nomes)
+allNames = aux_nomes
 combinations = product(*(aux_nomes[Name] for Name in allNames))
 
 combinacoes = list(set(list(combinations)))
 
 for com in combinacoes:
-    aux_regra = ''
     aux_nomes2 = deepcopy(aux_nomes)
+    # print(com)
     for c in com:
-        for nome in aux_nomes:
+        for nome in aux_nomes2:
+            if c in aux_nomes2[nome]:
+                # print(f'>>{c}')
+                aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c)
+                # print(f'==>{aux_nomes2}')
+    mostrar_probabilidade(aux_nomes2, True, c)
             # print(aux_nomes2)
-            # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c)
-            print(aux_nomes2)
+            #
+            # print(aux_nomes2)
         # print(c)
+
+regra = list(dict.fromkeys(regra))
+ss = list()
+for r in regra:
+    # print(r)
+    s = r.split(' -> ')
+    s = [x.replace("REGRA: ", "") for x in s]
+    ss.append(s)
+    # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+    pass
+
+indices = []
+
+for k, v in enumerate(ss):
+    for x, y in enumerate(ss):
+        if len(list(set(v) - set(y))) == 2:
+            ss.pop(ss.index(v))
+            ss.pop(ss.index(y))
+            break
+
+
+
+print(ss)
 
 # print(list(combinations))
 
