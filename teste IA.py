@@ -1,6 +1,6 @@
 import csv
 from collections import defaultdict
-from itertools import islice, combinations
+from itertools import islice, combinations, product
 from copy import deepcopy
 
 aux_regra = ''
@@ -136,14 +136,41 @@ for c in range(len(nomes)-2):
 
 aux_nomes = deepcopy(nomes)
 aux_nomes.pop('age', None)
+list_of_list = []
+
+# print(aux_nomes)
 for i, nome in enumerate(aux_nomes):
     mylist = list(set(aux_nomes[nome]))
-    for item in mylist:
-        aux_nomes2 = deepcopy(aux_nomes)
-        aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
-        mostrar_probabilidade(aux_nomes2, True, item)
+    # for item in mylist:
+    #     aux_nomes2 = deepcopy(aux_nomes)
+    #     aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+    #     mostrar_probabilidade(aux_nomes2, True, item)
 
 
+
+allNames = sorted(aux_nomes)
+combinations = product(*(aux_nomes[Name] for Name in allNames))
+
+combinacoes = list(set(list(combinations)))
+
+for com in combinacoes:
+    aux_regra = ''
+    aux_nomes2 = deepcopy(aux_nomes)
+    for c in com:
+        for nome in aux_nomes:
+            # print(aux_nomes2)
+            # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c)
+            print(aux_nomes2)
+        # print(c)
+
+# print(list(combinations))
+
+# prod = list(product(*list_of_list))
+# for pr in prod:
+#     aux_regra = ''
+#     aux_nomes2 = deepcopy(aux_nomes)
+#     for p in pr:
+#         aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
 
 # Remover chave do dicionário pelo index
 # del nomes[next(islice(nomes, 0, None))]
