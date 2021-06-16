@@ -15,7 +15,7 @@ def calcular_probabilidade(valor, total):
     return f'{(valor/total)*100:.2f}'
 
 
-def mostrar_probabilidade(nomes, printar, ultimo):
+def mostrar_probabilidade(nomes, printar):
     global aux_regra, regra
     for x, n in enumerate(nomes):
         lista = []
@@ -46,9 +46,18 @@ def mostrar_probabilidade(nomes, printar, ultimo):
                 # print(f'{key} -> {value}x, {calcular_probabilidade(value, dicionario["total"])}%')
                 if x+1 == len(nomes):
                     if key != 'total' and int(float(calcular_probabilidade(value, dicionario["total"]))) == 100:
-                        aux_regra += f' {key}'
-                        # print(aux_regra)
-                        regra.append(aux_regra)
+                        checar = False
+                        cont = 0
+
+                        for i, r in enumerate(list(regra)):
+                            if aux_regra in r:
+                                checar = True
+                                regra.pop(i - cont)
+                                cont += 1
+
+                        if not checar:
+                            aux_regra += f' {key}'
+                            regra.append(aux_regra)
                         aux_regra = ''
 
 
@@ -138,9 +147,16 @@ for c in range(len(nomes)-2):
                 break
 '''
 
+for c in range(len(nomes)-2):
+    comb = combinations(nomes, c+1)
+    for i in list(comb):
+        print(i)
+
 aux_nomes = deepcopy(nomes)
 aux_nomes.pop('age', None)
-list_of_list = []
+# aux_nomes.pop('prescrip', None)
+# aux_nomes.pop('astigmatism', None)
+# aux_nomes.pop('tear-prod-rate', None)
 
 # print(aux_nomes)
 for i, nome in enumerate(aux_nomes):
@@ -151,7 +167,6 @@ for i, nome in enumerate(aux_nomes):
     #     mostrar_probabilidade(aux_nomes2, True, item)
 
 
-
 allNames = aux_nomes
 combinations = product(*(aux_nomes[Name] for Name in allNames))
 
@@ -159,18 +174,22 @@ combinacoes = list(set(list(combinations)))
 
 for com in combinacoes:
     aux_nomes2 = deepcopy(aux_nomes)
-    # print(com)
+
+    # print(f'Deixando apenas {com}')
     for c in com:
         for nome in aux_nomes2:
             if c in aux_nomes2[nome]:
                 # print(f'>>{c}')
                 aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c)
                 # print(f'==>{aux_nomes2}')
-    mostrar_probabilidade(aux_nomes2, True, c)
+    # print(aux_nomes2)
+    # print(f'Temos {aux_nomes2}\n\n')
+    mostrar_probabilidade(aux_nomes2, True)
             # print(aux_nomes2)
             #
             # print(aux_nomes2)
         # print(c)
+
 
 regra = list(dict.fromkeys(regra))
 ss = list()
@@ -182,18 +201,22 @@ for r in regra:
     # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
     pass
 
-indices = []
+for s in ss:
+    print(s)
+    pass
 
-for k, v in enumerate(ss):
-    for x, y in enumerate(ss):
-        if len(list(set(v) - set(y))) == 2:
-            ss.pop(ss.index(v))
-            ss.pop(ss.index(y))
-            break
-
-
-
-print(ss)
+# indices = []
+#
+# for k, v in enumerate(ss):
+#     for x, y in enumerate(ss):
+#         if len(list(set(v) - set(y))) == 2:
+#             ss.pop(ss.index(v))
+#             ss.pop(ss.index(y))
+#             break
+#
+#
+#
+# print(ss)
 
 # print(list(combinations))
 
