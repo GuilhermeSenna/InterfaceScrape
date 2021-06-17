@@ -11,6 +11,7 @@ ultimo_nome = ''
 def symmetric_difference(a, b):
     return {*a} ^ {*b}
 
+
 def calcular_probabilidade(valor, total):
     return f'{(valor/total)*100:.2f}'
 
@@ -147,49 +148,66 @@ for c in range(len(nomes)-2):
                 break
 '''
 
-for c in range(len(nomes)-2):
-    comb = combinations(nomes, c+1)
-    for i in list(comb):
-        print(i)
+for n in range(len(nomes)-2): # Gera as combinações
+    comb = combinations(nomes, n+1)
+    for co in list(comb):  # Pega cada combinação em si
+        aux_nomes = deepcopy(nomes)
+        for c in co:
+            aux_nomes.pop(c, None)
+            for i, nome in enumerate(aux_nomes):
+                mylist = list(set(aux_nomes[nome]))
+            allNames = aux_nomes
+            combinationes = product(*(aux_nomes[Name] for Name in allNames))
 
-aux_nomes = deepcopy(nomes)
-aux_nomes.pop('age', None)
-# aux_nomes.pop('prescrip', None)
-# aux_nomes.pop('astigmatism', None)
-# aux_nomes.pop('tear-prod-rate', None)
+            combinacoes = list(set(list(combinationes)))
+
+            # print(combinacoes)
+
+            for com in combinacoes:
+                aux_nomes2 = deepcopy(aux_nomes)
+
+                # print(f'Deixando apenas {com}')
+                for c_ in com:
+                    for nome in aux_nomes2:
+                        if c_ in aux_nomes2[nome]:
+                            # print(f'>>{c}')
+                            # print(aux_nomes2)
+                            aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c_)
+                # print(aux_nomes2)
+                # print(f'Temos {aux_nomes2}\n\n')
+                mostrar_probabilidade(aux_nomes2, True)
+                # print(aux_nomes2)
+                #
+                # print(aux_nomes2)
+                # print(c)
+
+            regra = list(dict.fromkeys(regra))
+            ss = list()
+            for r in regra:
+                # print(r)
+                s = r.split(' -> ')
+                s = [x.replace("REGRA: ", "") for x in s]
+                ss.append(s)
+                # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+                pass
+
+            for s in ss:
+                # print(s)
+                pass
+
 
 # print(aux_nomes)
-for i, nome in enumerate(aux_nomes):
-    mylist = list(set(aux_nomes[nome]))
+
     # for item in mylist:
     #     aux_nomes2 = deepcopy(aux_nomes)
     #     aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
     #     mostrar_probabilidade(aux_nomes2, True, item)
 
 
-allNames = aux_nomes
-combinations = product(*(aux_nomes[Name] for Name in allNames))
 
-combinacoes = list(set(list(combinations)))
 
-for com in combinacoes:
-    aux_nomes2 = deepcopy(aux_nomes)
 
-    # print(f'Deixando apenas {com}')
-    for c in com:
-        for nome in aux_nomes2:
-            if c in aux_nomes2[nome]:
-                # print(f'>>{c}')
-                aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c)
-                # print(f'==>{aux_nomes2}')
-    # print(aux_nomes2)
-    # print(f'Temos {aux_nomes2}\n\n')
-    mostrar_probabilidade(aux_nomes2, True)
-            # print(aux_nomes2)
-            #
-            # print(aux_nomes2)
-        # print(c)
-
+"""
 
 regra = list(dict.fromkeys(regra))
 ss = list()
@@ -202,7 +220,7 @@ for r in regra:
     pass
 
 for s in ss:
-    print(s)
+    # print(s)
     pass
 
 # indices = []
@@ -246,3 +264,5 @@ for s in ss:
 # nomes = retirar_ocorrencias(nomes, 'tear-prod-rate', 'reduced')
 
 # mostrar_probabilidade(nomes, True)
+
+"""
