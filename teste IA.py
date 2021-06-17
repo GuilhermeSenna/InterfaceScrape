@@ -2,6 +2,7 @@ import csv
 from collections import defaultdict
 from itertools import islice, combinations, product
 from copy import deepcopy
+import time
 
 aux_regra = ''
 regra = []
@@ -148,56 +149,133 @@ for c in range(len(nomes)-2):
                 break
 '''
 
+testes = []
+inicio = time.time()
 for n in range(len(nomes)-2): # Gera as combinações
     comb = combinations(nomes, n+1)
     for co in list(comb):  # Pega cada combinação em si
         aux_nomes = deepcopy(nomes)
         for c in co:
             aux_nomes.pop(c, None)
-            for i, nome in enumerate(aux_nomes):
-                mylist = list(set(aux_nomes[nome]))
-            allNames = aux_nomes
-            combinationes = product(*(aux_nomes[Name] for Name in allNames))
+        for i, nome in enumerate(aux_nomes):
+            mylist = list(set(aux_nomes[nome]))
+        allNames = aux_nomes
+        combinationes = product(*(aux_nomes[Name] for Name in allNames))
 
-            combinacoes = list(set(list(combinationes)))
+        combinacoes = list(set(list(combinationes)))
 
-            # print(combinacoes)
+        # print(combinacoes)
 
-            for com in combinacoes:
-                aux_nomes2 = deepcopy(aux_nomes)
+        for com in combinacoes:
+            aux_nomes2 = deepcopy(aux_nomes)
 
-                # print(f'Deixando apenas {com}')
-                for c_ in com:
-                    for nome in aux_nomes2:
-                        if c_ in aux_nomes2[nome]:
-                            # print(f'>>{c}')
-                            # print(aux_nomes2)
-                            aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c_)
-                # print(aux_nomes2)
-                # print(f'Temos {aux_nomes2}\n\n')
-                mostrar_probabilidade(aux_nomes2, True)
-                # print(aux_nomes2)
-                #
-                # print(aux_nomes2)
-                # print(c)
+            # print(f'Deixando apenas {com}')
+            for c_ in com:
+                for nome in aux_nomes2:
+                    if c_ in aux_nomes2[nome]:
+                        # print(f'>>{c}')
+                        # print(aux_nomes2)
+                        aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, c_)
+            # print(aux_nomes2)
+            # print(f'Temos {aux_nomes2}\n\n')
+            mostrar_probabilidade(aux_nomes2, True)
+            # print(aux_nomes2)
+            #
+            # print(aux_nomes2)
+            # print(c)
 
-            regra = list(dict.fromkeys(regra))
-            ss = list()
-            for r in regra:
-                # print(r)
-                s = r.split(' -> ')
-                s = [x.replace("REGRA: ", "") for x in s]
-                ss.append(s)
-                # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+        regra = list(dict.fromkeys(regra))
+        ss = list()
+        for r in regra:
+            # print(r)
+            s = r.split(' -> ')
+            s = [x.replace("REGRA: ", "") for x in s]
+            ss.append(s)
+            # aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
+            pass
+
+        for s in ss:
+            if not s in testes:
+                testes.append(s)
                 pass
 
-            for s in ss:
-                # print(s)
-                pass
+
+fim = time.time()
+print(f'{fim - inicio:.2f} segundos para gerar as regras.')
+
+
+# print(nomes)
+
+# nomes = retirar_ocorrencias(nomes, 'tear-prod-rate', 'reduced')
+
+# mostrar_probabilidade(nomes, True)
 
 
 # print(aux_nomes)
 
+
+# nomes.pop('age', None)
+# nomes.pop('prescrip', None)
+# nomes.pop('astigmatism', None)
+# nomes = retirar_ocorrencias(nomes, 'astigmatism', 'no')
+# nomes = retirar_ocorrencias(nomes, 'tear-prod-rate', 'reduced')
+
+# print('\n\n\n\n')
+# mostrar_probabilidade(nomes, True)
+
+# print(regra)
+
+testes.sort(key=len)
+items = []
+items2 = []
+for t, lista in enumerate(testes):
+    if len(lista) == 2:
+        regra.clear()
+
+        aux_nomes = deepcopy(nomes)
+        # Pega todas as keys do dicionário
+        list_aux = []
+        for nom in aux_nomes:
+            list_aux.append(nom)
+
+        # Deixa só as keys que não estão presentes
+        for l in lista:
+            for lx in list_aux:
+                if l in aux_nomes[lx]:
+                    list_aux.pop(list_aux.index(lx))
+
+        # Retira do dicionário as keys que não estão presentes
+        for lx in list_aux:
+            aux_nomes.pop(lx, None)
+
+        for k, v in aux_nomes.items():
+            if lista[0] in v:
+                aux_nomes = retirar_ocorrencias(aux_nomes, k, lista[0])
+                break
+
+        mostrar_probabilidade(aux_nomes, True)
+        if not regra:
+            items.append(lista)
+    else:
+        # Roda apenas uma vez após a seleção das regras
+        if items:
+            for i in items:
+                testes.pop(testes.index(i))
+            items.clear()
+
+
+ls = ['reduced', 'none']
+ls2 = ['no', 'reduced', 'none']
+
+print(ls in ls2)
+# for t, lista in enumerate(testes):
+#     if lista == ls or ls not in lista:
+
+
+print(testes)
+
+
+# print(aux_nomes)
     # for item in mylist:
     #     aux_nomes2 = deepcopy(aux_nomes)
     #     aux_nomes2 = retirar_ocorrencias(aux_nomes2, nome, item)
