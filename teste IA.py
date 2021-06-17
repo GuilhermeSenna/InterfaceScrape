@@ -27,9 +27,7 @@ def mostrar_probabilidade(nomes, printar):
         for c in range(2):
             for nome in nomes[n]:
                 total += 1
-                if not lista:
-                    lista.append(nome)
-                if not nome in lista:
+                if not lista or not nome in lista:
                     lista.append(nome)
 
                 if c == 1:
