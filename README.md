@@ -4,7 +4,7 @@
 
 **Projeto pessoal feito com a biblioteca/Framework Streamlit usada para criar a interface WEB**
  
- ![Streamlit Logo](Streamlit_Logo_1.jpg)
+ ![Streamlit Logo](Streamlit_Logo.jpg)
 
 ---
 
