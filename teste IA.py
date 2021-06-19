@@ -147,6 +147,7 @@ for c in range(len(nomes)-2):
                 break
 '''
 
+cont = 0
 testes = []
 inicio = time.time()
 for n in range(len(nomes)-2): # Gera as combinações
@@ -196,11 +197,14 @@ for n in range(len(nomes)-2): # Gera as combinações
             if not s in testes:
                 testes.append(s)
                 pass
-
+            else:
+                cont += 1
 
 fim = time.time()
 print(f'{fim - inicio:.2f} segundos para gerar as regras.')
 
+print(f'\nQuantidade de possíveis regras repetidas removidas: {cont}')
+print(f'Quantidade de possíveis regras geradas: {len(testes)}')
 
 # print(nomes)
 
@@ -226,15 +230,17 @@ print(f'{fim - inicio:.2f} segundos para gerar as regras.')
 testes.sort(key=len)
 items = []
 items2 = []
+
+# Pega todas as keys do dicionário
+list_aux = []
+for nom in aux_nomes:
+    list_aux.append(nom)
+
 for t, lista in enumerate(testes):
     if len(lista) == 2:
         regra.clear()
 
         aux_nomes = deepcopy(nomes)
-        # Pega todas as keys do dicionário
-        list_aux = []
-        for nom in aux_nomes:
-            list_aux.append(nom)
 
         # Deixa só as keys que não estão presentes
         for l in lista:
@@ -261,17 +267,23 @@ for t, lista in enumerate(testes):
                 testes.pop(testes.index(i))
             items.clear()
 
+print(f'Quantidade de possíveis regras após a validação das menores regras: {len(testes)}')
 
-ls = ['reduced', 'none']
-ls2 = ['no', 'reduced', 'none']
 
-print(ls in ls2)
+for c in range(5):
+    for t in testes:
+        if all(a in t for a in testes[0]) and t != testes[0]:
+            # print(t)
+            testes.pop(testes.index(t))
+
+print(f'Quantidade de possíveis regras após a retirada da regra menor utilizada como subregra: {len(testes)}')
+
+
+
+
+
 # for t, lista in enumerate(testes):
 #     if lista == ls or ls not in lista:
-
-
-print(testes)
-
 
 # print(aux_nomes)
     # for item in mylist:
@@ -280,8 +292,83 @@ print(testes)
     #     mostrar_probabilidade(aux_nomes2, True, item)
 
 
+items = []
+items2 = []
+for t, lista in enumerate(testes):
+    if len(lista) == 3:
+        regra.clear()
+
+        aux_nomes = deepcopy(nomes)
+
+        # Deixa só as keys que não estão presentes
+        for l in lista:
+            for lx in list_aux:
+                if l in aux_nomes[lx]:
+                    list_aux.pop(list_aux.index(lx))
+
+        # Retira do dicionário as keys que não estão presentes
+        for lx in list_aux:
+            aux_nomes.pop(lx, None)
+
+        for k, v in aux_nomes.items():
+            for c in range(2):
+                if lista[c] in v:
+                    aux_nomes = retirar_ocorrencias(aux_nomes, k, lista[c])
+                    break
+
+        mostrar_probabilidade(aux_nomes, True)
+        if not regra:
+            items.append(lista)
+    else:
+        # Roda apenas uma vez após a seleção das regras
+        if items:
+            for i in items:
+                testes.pop(testes.index(i))
+            items.clear()
+
+print(f'Quantidade de possíveis regras após a validação das menores regras: {len(testes)}')
 
 
+items = []
+items2 = []
+for t, lista in enumerate(testes):
+    if len(lista) == 4:
+        print(lista)
+        regra.clear()
+
+        aux_nomes = deepcopy(nomes)
+        # Deixa só as keys que não estão presentes
+        for l in lista:
+            for lx in list_aux:
+                if l in aux_nomes[lx]:
+                    list_aux.pop(list_aux.index(lx))
+
+        # Retira do dicionário as keys que não estão presentes
+        for lx in list_aux:
+            aux_nomes.pop(lx, None)
+
+
+        print('===')
+        for k, v in aux_nomes.items():
+            for c in range(3):
+                print(f'{lista[c]} -> {v}')
+                if lista[c] in v:
+                    aux_nomes = retirar_ocorrencias(aux_nomes, k, lista[c])
+                    print(aux_nomes)
+                    break
+
+        mostrar_probabilidade(aux_nomes, True)
+        if not regra:
+            items.append(lista)
+    else:
+        # Roda apenas uma vez após a seleção das regras
+        if items:
+            for i in items:
+                # print(i)
+                testes.pop(testes.index(i))
+            items.clear()
+
+print(f'Quantidade de possíveis regras após a validação das menores regras: {len(testes)}')
 
 """
 
