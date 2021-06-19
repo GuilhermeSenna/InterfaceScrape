@@ -2,7 +2,7 @@
 
 ## Repositório alterado para público em 18/06/2021
 
-**Aplicativos criados com a biblioteca/Framework Streamlit usada para criar a interface WEB**
+**Projeto pessoal feito com a biblioteca/Framework Streamlit usada para criar a interface WEB**
  
  ![Streamlit Logo](Streamlit_Logo_1.jpg)
 
