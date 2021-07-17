@@ -30,11 +30,11 @@ text_save = []
 # Constantes utilizadas para ser restaurado o último scrap
 PRE_URL = ''
 PRE_QNTD = 1
-PRE_NOME = ['', '', '', '', '', '', '', '', '', '']
-PRE_UNICA = [False, False, False, False, False, False, False, False, False, False]
-PRE_TAG = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-PRE_IDEEL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-PRE_NOIDE = ['', '', '', '', '', '', '', '', '', '']
+PRE_NOME = [''] * 10
+PRE_UNICA = [False] * 10
+PRE_TAG = [0] * 10
+PRE_IDEEL = [1] * 10
+PRE_NOIDE = [''] * 10
 
 
 # Função que mostra o último scrape utilizado no topo da página
