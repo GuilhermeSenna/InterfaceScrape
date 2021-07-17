@@ -56,7 +56,7 @@
 
 # Projeto iniciado em 18/05/2021 mas já idealizado anteriormente
 
-## Todas as mudanças por ordem cronológica:
+## Algumas mudanças por ordem cronológica:
 
 **18/05/2021**
 - Adição do SessionState.py usado para guardar o estado atual (variáveis globais)
