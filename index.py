@@ -195,35 +195,15 @@ def metodoManual(headers):
                 print(pagina)
 
     espaco()
-
     exemplo()
-
     espaco()
 
-    #                                                                                          #
-    #                      Início da criação das variáveis para guardar os inputs/tags         #
-    #                      Até o momento o limite são 10 inputs                                #
-    #                                                                                          #
-
-    nome1 = nome2 = nome3 = nome4 = nome5 = nome6 = nome7 = nome8 = nome9 = nome10 = ''
-    nome = [nome1, nome2, nome3, nome4, nome5, nome6, nome7, nome8,
-            nome9, nome10]
-    englobado1 = englobado2 = englobado3 = englobado4 = englobado5 = englobado6 = englobado7 = englobado8 = englobado9 = englobado10 = ''
-    unica = [englobado1, englobado2, englobado3, englobado4, englobado5, englobado6, englobado7, englobado8,
-             englobado9, englobado10]
-    tipo_global1 = tipo_global2 = tipo_global3 = tipo_global4 = tipo_global5 = tipo_global6 = tipo_global7 = tipo_global8 = tipo_global9 = tipo_global10 = ''
-    tipo_global = [tipo_global1, tipo_global2, tipo_global3, tipo_global4, tipo_global5, tipo_global6, tipo_global7,
-                   tipo_global8, tipo_global9, tipo_global10]
-    tipo_especifico1 = tipo_especifico2 = tipo_especifico3 = tipo_especifico4 = tipo_especifico5 = tipo_especifico6 = tipo_especifico7 = tipo_especifico8 = tipo_especifico9 = tipo_especifico10 = ''
-    tipo_especifico = [tipo_especifico1, tipo_especifico2, tipo_especifico3, tipo_especifico4, tipo_especifico5,
-                       tipo_especifico6, tipo_especifico7, tipo_especifico8, tipo_especifico9, tipo_especifico10]
-    nome_especifico1 = nome_especifico2 = nome_especifico3 = nome_especifico4 = nome_especifico5 = nome_especifico6 = nome_especifico7 = nome_especifico8 = nome_especifico9 = nome_especifico10 = ''
-    nome_especifico = [nome_especifico1, nome_especifico2, nome_especifico3, nome_especifico4, nome_especifico5,
-                       nome_especifico6, nome_especifico7, nome_especifico8, nome_especifico9, nome_especifico10]
-
-    #                                                                                     #
-    #                      Fim da criação das variáveis                                   #
-    #                                                                                     #
+    # Declaração de variáveis
+    nome = ['']*10
+    unica = ['']*10
+    tipo_global = ['']*10
+    tipo_especifico = ['']*10
+    nome_especifico = ['']*10
 
     # Gerando inputs dinamicamente
     for c in range(0, int(qntd_inputs)):
