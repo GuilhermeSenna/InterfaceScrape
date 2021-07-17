@@ -45,14 +45,11 @@ def carregar(arquivo):
 
         my_expander = st.beta_expander("Último Scrap usado:", expanded=True)
         with my_expander:
-            # clicked = my_widget("second")
             st.json(json.dumps(data, indent=4))
 
-        # st.subheader("Último Scrap usado:")
-
         return data
-    except:
-        pass
+    except ValueError:
+        st.error('Erro com o carregamento do arquivo JSON, tente com outro.')
 
 
 # Função utilizada para recarregar na página o último scrape utilizado
@@ -102,74 +99,63 @@ def tagsMultiplas(URL, headers, tGlobal, tEspecifico, nEspecifico, c):
 
 
 # Config:
-# True: Utilizado para configurações
-# False: Usado para resultados
+# True: Utilizado para configurações que geram resultados (metodoManual)
+# False: Usado para ver os resultados (carregamento_JSON)
 def import_export(config):
+
+    # Pasta em que é buscado os scraps
     pasta = './scraps'
 
+    # Opção inicial/Default, não mostrar nenhum
     scrapers = ['Nenhum']
+
+    # Se entrou para configuração
     if config:
+        # Adiciona a opção de escolher o último scrape usado
         scrapers.append('Último usado')
 
+        # Percorre a pasta buscando os arquivos que NÃO contenham "result" no nome, para receber as configuração de scrape
         for diretorio, subpastas, arquivos in os.walk(pasta):
             for arquivo in arquivos:
-                # print(os.path.join(diretorio, arquivo))
                 if not 'result' in arquivo:
                     scrapers.append(arquivo)
 
-        # print(scrapers)
-
+        # Escolha do arquivo
         archive = st.selectbox('(opcional) Escolha um arquivo salvo de scrap', scrapers)
 
         # Escolher usar ou não o último scrape
         if archive != scrapers[0] and archive != scrapers[1]:
             data = carregar('scraps/' + archive)
-            recarregar(data)
-        elif archive == scrapers[1]:
+            if data:
+                recarregar(data)
+        elif archive == scrapers[1]: # Não é usado else pois existe também a opção de não mostrar nenhum scrape.
             data = carregar('scraps/ult_scrap.json')
-            recarregar(data)
+            if data:
+                recarregar(data)
     else:
+        # Percorre a pasta buscando os arquivos que contenham "result" no nome, para visualização dos resultados
         for diretorio, subpastas, arquivos in os.walk(pasta):
             for arquivo in arquivos:
-                # print(os.path.join(diretorio, arquivo))
                 if 'result' in arquivo:
+
                     scrapers.append(arquivo)
 
-        archive = st.selectbox('Escolha um dos resultados de scrap', scrapers)
+        # Escolha do arquivo
+        archive = st.selectbox('Escolha um dos resultados de scrape', scrapers)
 
-        if archive != scrapers[0]:
-            data = carregar('scraps/' + archive)
-            return data
-            # recarregar(data)
-
+        if archive != scrapers[0]:                # Se não for a opção "Nenhum"
+            data = carregar('scraps/' + archive)  # Carrega o arquivo
+            return data                           # O conteúdo de data é validado na função que é retornado (carregamento_JSON)
+        else:                                     # Se for a opção "Nenhum"
+            st.warning('Por favor escolha um arquivo para visualizá-lo')
 
 
 # Função 'main'
 def metodoManual(headers):
     global QNTD
 
+    # Título do app
     st.title('Metodo manual')
-
-    # oi = 'teste'
-    #
-    # stc.html(f'<h1 style="color: white;">{oi}</h1>')
-
-    # with st.echo():
-    #     st.write('This code will be printed')
-
-    # with st.form("my_form"):
-    #     st.write("Inside the form")
-    #     slider_val = st.slider("Form slider")
-    #     checkbox_val = st.checkbox("Form checkbox")
-    #
-    #
-    #     submitted = st.form_submit_button("Submit")
-    #     if submitted:
-    #         st.write("slider", slider_val, "checkbox", checkbox_val)
-    #
-    # st.write("Outside the form")
-
-
 
     # Variável responsável por receber os dados do último scrape
     # print(data)
@@ -209,7 +195,6 @@ def metodoManual(headers):
                 print(pagina)
 
     espaco()
-
 
     exemplo()
 
@@ -279,24 +264,15 @@ def metodoManual(headers):
     minerar(URL, headers, unica, qntd_inputs, tipo_global, tipo_especifico, nome, nome_especifico, baixar, limpar,
             URL_base, complemento, False, ultimo_scrap, 2, x, QNTD, text_save)
 
-    # y = st.radio('tag única? (Não há outras tags com o mesmo identificador)', ('sim', 'nao'))
-    # if y == 'sim':
-    #     print(session_state)
-    # with open('data.txt', 'w') as outfile:
-    #     json.dump(texto_formatado, outfile)
-
 
 def carregamento_JSON():
     st.title('Carregamento de JSON')
 
-    try:
-        data = import_export(False)
+    data = import_export(False)
 
-        tabela = st.checkbox('Gerar tabela')
-
+    if data:
         cont = -1
         verificar = False
-
 
         teste = []
         for i, (key, value) in enumerate(data.items()):
@@ -321,10 +297,6 @@ def carregamento_JSON():
             cols[0].write(f'{teste[0][c]}')
             cols[1].write(f'{teste[1][c]}')
 
-    except:
-        pass
-
-
 
 def main():
     headers = {
@@ -348,5 +320,5 @@ def main():
         st.title('Webscraping Automatico')
 
 
-# Início aqui
-main()
+if __name__ == '__main__':
+    main()
