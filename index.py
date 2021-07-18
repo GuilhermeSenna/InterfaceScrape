@@ -88,13 +88,18 @@ def tagsMultiplas(URL, headers, tGlobal, tEspecifico, nEspecifico, c):
         try:
             page = requests.get(URL, headers=headers)
         except:
-            print('Deu problema')
+            st.error('Problema obtido ao fazer a requisição da página')
 
         soup = BeautifulSoup(page.text, 'html.parser')
 
+        # Busca todos os valores do URL específicado que estejam na tag
         conjunto = soup.findAll(tGlobal[c], attrs={tEspecifico[c]: nEspecifico[c]})
 
-        for item in conjunto:
+        if len(conjunto) == 0: # Caso não tenha obtido resultados
+            st.warning('Nenhum resultado encontrado!\n\n'
+                       ' A classe pode estar escrita errada e/ou houve erro na requisição.\n\n'
+                       ' Verifique o nome e tente novamente.')
+        for item in conjunto:  # Caso tenha obtido resultados
             st.text(item.text)
 
 
@@ -194,6 +199,7 @@ def metodoManual(headers):
             for pagina in paginas:
                 print(pagina)
 
+    # Exemplo para o usuário de como utilizar os inputs para um scrape correto
     espaco()
     exemplo()
     espaco()
@@ -245,57 +251,74 @@ def metodoManual(headers):
             URL_base, complemento, False, ultimo_scrap, 2, x, QNTD, text_save)
 
 
+# Função para visualizar os resultados obtidos do scrape
 def carregamento_JSON():
+    # Título da página
     st.title('Carregamento de JSON')
 
+    # Importação do JSON
     data = import_export(False)
 
+    # Checa se data não é None
     if data:
         cont = -1
         verificar = False
 
         teste = []
-        for i, (key, value) in enumerate(data.items()):
-            # print(key, len([item for item in value if item]))
 
+        # Checa se as colunas possuem a mesma quantidade de informações preenchidas
+        for i, (key, value) in enumerate(data.items()):
             teste.append(value)
 
-            if cont == -1:
+            if cont == -1:                                       # Primeira entrada
                 cont = len([item for item in value if item])
-            elif cont == len([item for item in value if item]):
+            elif cont == len([item for item in value if item]):  # Após a primeira entrada
                 verificar = True
             else:
                 verificar = False
+                # break
 
+        # Verificação para saber se todos os itens possuem a mesma quantidade
+        # Retorna o resultado para o usuário
         if verificar:
             st.success('Todos os atributos possuem a mesma quantidade de itens')
+
+            parametro = list(data.keys())
+
+            # Mostra a tabela com os resultados do scrape
+            for c in range(len(teste[0])):
+                cols = st.beta_columns(len(parametro))
+                if c == 0:
+                    for n, m in enumerate(parametro):
+                        # print(m)
+                        cols[n].write(f'{m}')
+                cols[0].write(f'{teste[0][c]}')
+                cols[1].write(f'{teste[1][c]}')
         else:
             st.warning('Há atributos com quantidade de itens diferentes')
 
-        for c in range(len(teste[0])):
-            cols = st.beta_columns(4)
-            cols[0].write(f'{teste[0][c]}')
-            cols[1].write(f'{teste[1][c]}')
-
 
 def main():
+    # headers para serem usados na requisição
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36', }
 
+    # Definindo título da página e layout default
     st.set_page_config(page_title='Data Science', layout='wide')
 
+    # Título inicial
     st.sidebar.title('Menu')
 
+    # Opções para se mostrar ao usuário
     selected = st.sidebar.radio('Selecione a página', ['Manual', 'Carregar JSON', 'Buscar exemplo', 'Imagem'])
 
-    if selected == 'Manual':
+    # Capturando o que foi escolhido pelo usuário
+    if selected == 'Manual':                      # Scraping principal, capturar informações de um website
         metodoManual(headers)
-    elif selected == 'Carregar JSON':
+    elif selected == 'Carregar JSON':             # Carregar informações obtidas de um scrap
         carregamento_JSON()
-    elif selected == 'Buscar exemplo':
+    elif selected == 'Buscar exemplo':            # Função experimental, para puxar informações a partir de um exemplo
         buscar_exemplo(headers, session_state)
-    elif selected == 'Imagem':
-        pass
     else:
         st.title('Webscraping Automatico')
 

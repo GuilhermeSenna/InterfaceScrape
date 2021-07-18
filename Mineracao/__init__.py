@@ -71,13 +71,6 @@ def minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, ba
 
                     # text.append(texto)
 
-            # for t in text:
-            # st.text(t)
-
-            # minerar(URL, headers, unc, qntd, tGlobal, tEspecifico, nome, nEspecifico, baixar, limpar)
-
-            print(URL)
-
             QNTD = int(QNTD)
 
             while QNTD > 0:
