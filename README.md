@@ -25,7 +25,7 @@
 **O que falta?**
 
 - Lógica para múltiplas em sequência e múltiplas avulsas
-- Adaptar para diferentes situações (Site de notícias, economia, etc..)
+- Adaptar para diferentes situações (Site de notícias, economia, etc.)
 
 
 ## Opção "Carregar JSON":
