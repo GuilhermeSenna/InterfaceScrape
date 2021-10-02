@@ -16,11 +16,11 @@
 - Usado para fazer webcrape dinamicamente 
 - Salva a última configuração de scrap usada ou qualquer outra que o usuário queira
 - Salva também o resultado do scrap, para uso futuro
-  - Ambos acima com JSON
+  - Ambos acima gerados em JSON
 - Possui exemplo didático para o usuário entender como funcionam os inputs
 - Inputs gerados dinamicamente de acordo com a escolha do usuário (max 10, por enquanto)
 - Permite destrinchar tags múltiplas para pegar a desejada
-- Opção de deletar quebras de linha ou espaço para melhor resultado (Beta)
+- Opção de deletar quebras de linha ou espaço para melhor resultado (Funcionalidade Beta)
 
 **O que falta?**
 
@@ -32,22 +32,22 @@
 
 > Programa complementar
 > Utilizado para uso prático do resultado do scrap do programa principal
-- Por enquanto gera tabela a partir de JSON
+- Por enquanto gera tabela a partir de um arquivo JSON
 - Falta elaborar mais
 
 ## Opção "Buscar exemplo"
 
 > Programa complementar
-> Focado em sites de notícia
+> focado em sites de notícia.
 > A ideia é obter todo o conteúdo da notícia a partir de um fragmento da mesma
 - Possui um slider para selecionar a generalização
   - Isso permite que se obtenha o conteúdo de diferentes sites com diferentes formas de dispor o texto no site
-- Lida com problemas no site de UTF-8
+- Lida com problemas no site codificados em UTF-8 (Funcionalidade Beta)
 - O usuário pode tentar algumas opções de corrigir alguns problemas de formatação (não resolve todos)
 
 **O que falta?**
 
-- Lidar com acentuação/codificação UTF-8
+- Lidar (melhor) com acentuação/codificação UTF-8
   - Foi tentado uma lógica similar mas o resultado retornaria o texto sem acentuação
 - Alguns sites barram por detectar o bot, retornam textos ilegíveis (Não é por conta de UTF-8)
 - Alguns sites geram muitos resíduos (textos em imagens, links de anúncio)
